@@ -1,0 +1,8 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/InventarioEquipos.Api/InventarioEquipos.Api.csproj" />
+    <Project Path="src/InventarioEquipos.Application/InventarioEquipos.Application.csproj" />
+    <Project Path="src/InventarioEquipos.Domain/InventarioEquipos.Domain.csproj" />
+    <Project Path="src/InventarioEquipos.Persistence/InventarioEquipos.Persistence.csproj" />
+  </Folder>
+</Solution>

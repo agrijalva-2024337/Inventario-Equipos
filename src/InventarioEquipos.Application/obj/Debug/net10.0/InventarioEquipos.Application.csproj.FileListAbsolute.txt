@@ -1,0 +1,11 @@
+C:\Users\AngelGrijalva\Documents\Proyectos SLC\InventarioEquipos\src\InventarioEquipos.Application\bin\Debug\net10.0\InventarioEquipos.Application.deps.json
+C:\Users\AngelGrijalva\Documents\Proyectos SLC\InventarioEquipos\src\InventarioEquipos.Application\bin\Debug\net10.0\InventarioEquipos.Application.dll
+C:\Users\AngelGrijalva\Documents\Proyectos SLC\InventarioEquipos\src\InventarioEquipos.Application\bin\Debug\net10.0\InventarioEquipos.Application.pdb
+C:\Users\AngelGrijalva\Documents\Proyectos SLC\InventarioEquipos\src\InventarioEquipos.Application\obj\Debug\net10.0\InventarioEquipos.Application.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\AngelGrijalva\Documents\Proyectos SLC\InventarioEquipos\src\InventarioEquipos.Application\obj\Debug\net10.0\InventarioEquipos.Application.AssemblyInfoInputs.cache
+C:\Users\AngelGrijalva\Documents\Proyectos SLC\InventarioEquipos\src\InventarioEquipos.Application\obj\Debug\net10.0\InventarioEquipos.Application.AssemblyInfo.cs
+C:\Users\AngelGrijalva\Documents\Proyectos SLC\InventarioEquipos\src\InventarioEquipos.Application\obj\Debug\net10.0\InventarioEquipos.Application.csproj.CoreCompileInputs.cache
+C:\Users\AngelGrijalva\Documents\Proyectos SLC\InventarioEquipos\src\InventarioEquipos.Application\obj\Debug\net10.0\InventarioEquipos.Application.dll
+C:\Users\AngelGrijalva\Documents\Proyectos SLC\InventarioEquipos\src\InventarioEquipos.Application\obj\Debug\net10.0\refint\InventarioEquipos.Application.dll
+C:\Users\AngelGrijalva\Documents\Proyectos SLC\InventarioEquipos\src\InventarioEquipos.Application\obj\Debug\net10.0\InventarioEquipos.Application.pdb
+C:\Users\AngelGrijalva\Documents\Proyectos SLC\InventarioEquipos\src\InventarioEquipos.Application\obj\Debug\net10.0\ref\InventarioEquipos.Application.dll
