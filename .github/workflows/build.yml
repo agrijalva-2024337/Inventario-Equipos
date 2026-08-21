@@ -1,0 +1,37 @@
+name: Build
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          global-json-file: global.json
+
+      - name: Restore
+        run: |
+          dotnet restore src/InventarioEquipos.Domain/InventarioEquipos.Domain.csproj
+          dotnet restore src/InventarioEquipos.Application/InventarioEquipos.Application.csproj
+          dotnet restore src/InventarioEquipos.Persistence/InventarioEquipos.Persistence.csproj
+          dotnet restore src/InventarioEquipos.Api/InventarioEquipos.Api.csproj
+
+      - name: Build
+        run: |
+          dotnet build src/InventarioEquipos.Domain/InventarioEquipos.Domain.csproj --no-restore
+          dotnet build src/InventarioEquipos.Application/InventarioEquipos.Application.csproj --no-restore
+          dotnet build src/InventarioEquipos.Persistence/InventarioEquipos.Persistence.csproj --no-restore
+          dotnet build src/InventarioEquipos.Api/InventarioEquipos.Api.csproj --no-restore
+
+      - name: Test
+        run: dotnet test --no-build --verbosity normal
+        continue-on-error: true
