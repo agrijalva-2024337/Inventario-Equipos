@@ -13,7 +13,7 @@ public class Proveedor : EntityBase
     private static readonly Regex CorreoRegex =
         new(@"^[^@\s]+@[^@\s]+\.[^@\s]+$", RegexOptions.Compiled);
 
-    public int EmpresaId { get; private set; }
+    public int IdEmpresa { get; private set; }
     public Empresa? Empresa { get; private set; }
 
     public string Nombre { get; private set; } = default!;
@@ -26,14 +26,14 @@ public class Proveedor : EntityBase
     protected Proveedor() { }
 
     private Proveedor(
-        int empresaId,
+        int idEmpresa,
         string nombre,
         string? nit,
         string? contacto,
         string? telefono,
         string? correo)
     {
-        EmpresaId = empresaId;
+        IdEmpresa = idEmpresa;
         Nombre = nombre;
         Nit = nit;
         Contacto = contacto;
@@ -43,14 +43,14 @@ public class Proveedor : EntityBase
     }
 
     public static Proveedor Crear(
-        int empresaId,
+        int idEmpresa,
         string nombre,
         string? nit = null,
         string? contacto = null,
         string? telefono = null,
         string? correo = null)
     {
-        ValidarEmpresaId(empresaId);
+        ValidarIdEmpresa(idEmpresa);
         ValidarNombre(nombre);
         ValidarNit(nit);
         ValidarContacto(contacto);
@@ -58,7 +58,7 @@ public class Proveedor : EntityBase
         correo = ValidarCorreoOpcional(correo);
 
         return new Proveedor(
-            empresaId,
+            idEmpresa,
             nombre.Trim(),
             nit?.Trim(),
             contacto?.Trim(),
@@ -67,21 +67,21 @@ public class Proveedor : EntityBase
     }
 
     public void ActualizarDatos(
-        int empresaId,
+        int idEmpresa,
         string nombre,
         string? nit,
         string? contacto,
         string? telefono,
         string? correo)
     {
-        ValidarEmpresaId(empresaId);
+        ValidarIdEmpresa(idEmpresa);
         ValidarNombre(nombre);
         ValidarNit(nit);
         ValidarContacto(contacto);
         ValidarTelefono(telefono);
         correo = ValidarCorreoOpcional(correo);
 
-        EmpresaId = empresaId;
+        IdEmpresa = idEmpresa;
         Nombre = nombre.Trim();
         Nit = nit?.Trim();
         Contacto = contacto?.Trim();
@@ -93,10 +93,10 @@ public class Proveedor : EntityBase
 
     public void Desactivar() => Estado = EstadoRegistro.Inactivo;
 
-    private static void ValidarEmpresaId(int empresaId)
+    private static void ValidarIdEmpresa(int idEmpresa)
     {
-        if (empresaId <= 0)
-            throw new ArgumentException("La empresa es obligatoria.", nameof(empresaId));
+        if (idEmpresa <= 0)
+            throw new ArgumentException("La empresa es obligatoria.", nameof(idEmpresa));
     }
 
     private static void ValidarNombre(string nombre)

@@ -9,7 +9,7 @@ namespace InventarioEquipos.Domain.Entities;
 /// </summary>
 public class Ubicacion : EntityBase
 {
-    public int SedeId { get; private set; }
+    public int IdSede { get; private set; }
     public Sede? Sede { get; private set; }
 
     public string Nombre { get; private set; } = default!;
@@ -18,30 +18,30 @@ public class Ubicacion : EntityBase
 
     protected Ubicacion() { }
 
-    private Ubicacion(int sedeId, string nombre, string? descripcion)
+    private Ubicacion(int idSede, string nombre, string? descripcion)
     {
-        SedeId = sedeId;
+        IdSede = idSede;
         Nombre = nombre;
         Descripcion = descripcion;
         Estado = EstadoRegistro.Activo;
     }
 
-    public static Ubicacion Crear(int sedeId, string nombre, string? descripcion = null)
+    public static Ubicacion Crear(int idSede, string nombre, string? descripcion = null)
     {
-        ValidarSedeId(sedeId);
+        ValidarIdSede(idSede);
         ValidarNombre(nombre);
         ValidarDescripcion(descripcion);
 
-        return new Ubicacion(sedeId, nombre.Trim(), descripcion?.Trim());
+        return new Ubicacion(idSede, nombre.Trim(), descripcion?.Trim());
     }
 
-    public void ActualizarDatos(int sedeId, string nombre, string? descripcion)
+    public void ActualizarDatos(int idSede, string nombre, string? descripcion)
     {
-        ValidarSedeId(sedeId);
+        ValidarIdSede(idSede);
         ValidarNombre(nombre);
         ValidarDescripcion(descripcion);
 
-        SedeId = sedeId;
+        IdSede = idSede;
         Nombre = nombre.Trim();
         Descripcion = descripcion?.Trim();
     }
@@ -50,10 +50,10 @@ public class Ubicacion : EntityBase
 
     public void Desactivar() => Estado = EstadoRegistro.Inactivo;
 
-    private static void ValidarSedeId(int sedeId)
+    private static void ValidarIdSede(int idSede)
     {
-        if (sedeId <= 0)
-            throw new ArgumentException("La sede es obligatoria.", nameof(sedeId));
+        if (idSede <= 0)
+            throw new ArgumentException("La sede es obligatoria.", nameof(idSede));
     }
 
     private static void ValidarNombre(string nombre)

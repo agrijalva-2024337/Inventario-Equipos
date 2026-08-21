@@ -4,17 +4,18 @@ using InventarioEquipos.Domain.Enums;
 namespace InventarioEquipos.Domain.Entities;
 
 /// <summary>
-/// Sede física de una empresa en un país. Depende de Empresa y Pais, por
-/// lo que solo puede mergearse después de que ambas estén en main.
+/// Sede física de una empresa en un país. Depende de Empresa y Pais.
 /// Columnas según el diagrama: id_empresa, id_pais, nombre, direccion,
 /// ciudad, estado. (El diagrama no incluye fecha_creacion para esta tabla.)
+/// Las FKs se nombran IdEmpresa / IdPais para que el orden de palabras
+/// coincida con id_empresa / id_pais al pasar a snake_case en el DbContext.
 /// </summary>
 public class Sede : EntityBase
 {
-    public int EmpresaId { get; private set; }
+    public int IdEmpresa { get; private set; }
     public Empresa? Empresa { get; private set; }
 
-    public int PaisId { get; private set; }
+    public int IdPais { get; private set; }
     public Pais? Pais { get; private set; }
 
     public string Nombre { get; private set; } = default!;
@@ -25,14 +26,14 @@ public class Sede : EntityBase
     protected Sede() { }
 
     private Sede(
-        int empresaId,
-        int paisId,
+        int idEmpresa,
+        int idPais,
         string nombre,
         string? direccion,
         string? ciudad)
     {
-        EmpresaId = empresaId;
-        PaisId = paisId;
+        IdEmpresa = idEmpresa;
+        IdPais = idPais;
         Nombre = nombre;
         Direccion = direccion;
         Ciudad = ciudad;
@@ -40,36 +41,36 @@ public class Sede : EntityBase
     }
 
     public static Sede Crear(
-        int empresaId,
-        int paisId,
+        int idEmpresa,
+        int idPais,
         string nombre,
         string? direccion = null,
         string? ciudad = null)
     {
-        ValidarEmpresaId(empresaId);
-        ValidarPaisId(paisId);
+        ValidarIdEmpresa(idEmpresa);
+        ValidarIdPais(idPais);
         ValidarNombre(nombre);
         ValidarDireccion(direccion);
         ValidarCiudad(ciudad);
 
-        return new Sede(empresaId, paisId, nombre.Trim(), direccion?.Trim(), ciudad?.Trim());
+        return new Sede(idEmpresa, idPais, nombre.Trim(), direccion?.Trim(), ciudad?.Trim());
     }
 
     public void ActualizarDatos(
-        int empresaId,
-        int paisId,
+        int idEmpresa,
+        int idPais,
         string nombre,
         string? direccion,
         string? ciudad)
     {
-        ValidarEmpresaId(empresaId);
-        ValidarPaisId(paisId);
+        ValidarIdEmpresa(idEmpresa);
+        ValidarIdPais(idPais);
         ValidarNombre(nombre);
         ValidarDireccion(direccion);
         ValidarCiudad(ciudad);
 
-        EmpresaId = empresaId;
-        PaisId = paisId;
+        IdEmpresa = idEmpresa;
+        IdPais = idPais;
         Nombre = nombre.Trim();
         Direccion = direccion?.Trim();
         Ciudad = ciudad?.Trim();
@@ -79,16 +80,16 @@ public class Sede : EntityBase
 
     public void Desactivar() => Estado = EstadoRegistro.Inactivo;
 
-    private static void ValidarEmpresaId(int empresaId)
+    private static void ValidarIdEmpresa(int idEmpresa)
     {
-        if (empresaId <= 0)
-            throw new ArgumentException("La empresa es obligatoria.", nameof(empresaId));
+        if (idEmpresa <= 0)
+            throw new ArgumentException("La empresa es obligatoria.", nameof(idEmpresa));
     }
 
-    private static void ValidarPaisId(int paisId)
+    private static void ValidarIdPais(int idPais)
     {
-        if (paisId <= 0)
-            throw new ArgumentException("El país es obligatorio.", nameof(paisId));
+        if (idPais <= 0)
+            throw new ArgumentException("El país es obligatorio.", nameof(idPais));
     }
 
     private static void ValidarNombre(string nombre)
