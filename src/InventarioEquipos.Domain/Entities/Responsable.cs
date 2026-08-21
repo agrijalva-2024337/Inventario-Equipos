@@ -16,13 +16,13 @@ public class Responsable : EntityBase
     private static readonly Regex CorreoRegex =
         new(@"^[^@\s]+@[^@\s]+\.[^@\s]+$", RegexOptions.Compiled);
 
-    public int EmpresaId { get; private set; }
+    public int idEmpresa { get; private set; }
     public Empresa? Empresa { get; private set; }
 
-    public int AreaId { get; private set; }
+    public int idArea { get; private set; }
     public Area? Area { get; private set; }
 
-    public int? UsuarioId { get; private set; }
+    public int? idUsuario { get; private set; }
     public Usuario? Usuario { get; private set; }
 
     public string NombreCompleto { get; private set; } = default!;
@@ -34,17 +34,17 @@ public class Responsable : EntityBase
     protected Responsable() { }
 
     private Responsable(
-        int empresaId,
-        int areaId,
-        int? usuarioId,
+        int idEmpresa,
+        int idArea,
+        int? idUsuario,
         string nombreCompleto,
         string? cargo,
         string? correo,
         string? telefono)
     {
-        EmpresaId = empresaId;
-        AreaId = areaId;
-        UsuarioId = usuarioId;
+        EmpresaId = idEmpresa;
+        AreaId = idArea;
+        UsuarioId = idUsuario;
         NombreCompleto = nombreCompleto;
         Cargo = cargo;
         Correo = correo;
@@ -53,26 +53,26 @@ public class Responsable : EntityBase
     }
 
     public static Responsable Crear(
-        int empresaId,
-        int areaId,
+        int idEmpresa,
+        int idArea,
         string nombreCompleto,
-        int? usuarioId = null,
+        int? idUsuario = null,
         string? cargo = null,
         string? correo = null,
         string? telefono = null)
     {
-        ValidarEmpresaId(empresaId);
-        ValidarAreaId(areaId);
-        ValidarUsuarioId(usuarioId);
+        ValidarEmpresaId(idEmpresa);
+        ValidarAreaId(idArea);
+        ValidarUsuarioId(idUsuario);
         ValidarNombreCompleto(nombreCompleto);
         ValidarCargo(cargo);
         correo = ValidarCorreoOpcional(correo);
         ValidarTelefono(telefono);
 
         return new Responsable(
-            empresaId,
-            areaId,
-            usuarioId,
+                        idEmpresa,
+            idArea,
+            idUsuario,
             nombreCompleto.Trim(),
             cargo?.Trim(),
             correo,
@@ -80,25 +80,25 @@ public class Responsable : EntityBase
     }
 
     public void ActualizarDatos(
-        int empresaId,
-        int areaId,
+        int idEmpresa,
+        int idArea,
         string nombreCompleto,
-        int? usuarioId,
+        int? idUsuario,
         string? cargo,
         string? correo,
         string? telefono)
     {
-        ValidarEmpresaId(empresaId);
-        ValidarAreaId(areaId);
-        ValidarUsuarioId(usuarioId);
+        ValidarEmpresaId(idEmpresa);
+        ValidarAreaId(idArea);
+        ValidarUsuarioId(idUsuario);
         ValidarNombreCompleto(nombreCompleto);
         ValidarCargo(cargo);
         correo = ValidarCorreoOpcional(correo);
         ValidarTelefono(telefono);
 
-        EmpresaId = empresaId;
-        AreaId = areaId;
-        UsuarioId = usuarioId;
+        EmpresaId = idEmpresa;
+        AreaId = idArea;
+        UsuarioId = idUsuario;
         NombreCompleto = nombreCompleto.Trim();
         Cargo = cargo?.Trim();
         Correo = correo;
@@ -109,22 +109,22 @@ public class Responsable : EntityBase
 
     public void Desactivar() => Estado = EstadoRegistro.Inactivo;
 
-    private static void ValidarEmpresaId(int empresaId)
+        private static void ValidarEmpresaId(int idEmpresa)
     {
-        if (empresaId <= 0)
-            throw new ArgumentException("La empresa es obligatoria.", nameof(empresaId));
+        if (idEmpresa <= 0)
+            throw new ArgumentException("La empresa es obligatoria.", nameof(idEmpresa));
     }
 
-    private static void ValidarAreaId(int areaId)
+    private static void ValidarAreaId(int idArea)
     {
-        if (areaId <= 0)
-            throw new ArgumentException("El área es obligatoria.", nameof(areaId));
+        if (idArea <= 0)
+            throw new ArgumentException("El área es obligatoria.", nameof(idArea));
     }
 
-    private static void ValidarUsuarioId(int? usuarioId)
+    private static void ValidarUsuarioId(int? idUsuario)
     {
-        if (usuarioId is <= 0)
-            throw new ArgumentException("El usuario, si se informa, debe ser mayor a 0.", nameof(usuarioId));
+        if (idUsuario is <= 0)
+            throw new ArgumentException("El usuario, si se informa, debe ser mayor a 0.", nameof(idUsuario));
     }
 
     private static void ValidarNombreCompleto(string nombreCompleto)
