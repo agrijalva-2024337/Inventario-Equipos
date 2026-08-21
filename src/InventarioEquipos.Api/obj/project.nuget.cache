@@ -1,11 +1,11 @@
 {
   "version": 2,
-  "dgSpecHash": "ASKXp44nLCU=",
+  "dgSpecHash": "Bep/E68LWY0=",
   "success": true,
-  "projectFilePath": "C:\\Users\\AngelGrijalva\\Documents\\Proyectos SLC\\InventarioEquipos\\src\\InventarioEquipos.Api\\InventarioEquipos.Api.csproj",
+  "projectFilePath": "C:\\Users\\BenjaminArgueta\\Documents\\Proyectos Practicas\\Inventario-Equipos\\src\\InventarioEquipos.Api\\InventarioEquipos.Api.csproj",
   "expectedPackageFiles": [
-    "C:\\Users\\AngelGrijalva\\.nuget\\packages\\microsoft.aspnetcore.openapi\\10.0.11\\microsoft.aspnetcore.openapi.10.0.11.nupkg.sha512",
-    "C:\\Users\\AngelGrijalva\\.nuget\\packages\\microsoft.openapi\\2.7.5\\microsoft.openapi.2.7.5.nupkg.sha512"
+    "C:\\Users\\BenjaminArgueta\\AppData\\Local\\Temp\\cursor-sandbox-cache\\2433524b45abdc179bbccf138904e7f3\\nuget\\microsoft.aspnetcore.openapi\\10.0.11\\microsoft.aspnetcore.openapi.10.0.11.nupkg.sha512",
+    "C:\\Users\\BenjaminArgueta\\AppData\\Local\\Temp\\cursor-sandbox-cache\\2433524b45abdc179bbccf138904e7f3\\nuget\\microsoft.openapi\\2.7.5\\microsoft.openapi.2.7.5.nupkg.sha512"
   ],
   "logs": []
 }

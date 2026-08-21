@@ -1,20 +1,20 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\AngelGrijalva\\Documents\\Proyectos SLC\\InventarioEquipos\\src\\InventarioEquipos.Api\\InventarioEquipos.Api.csproj": {}
+    "C:\\Users\\BenjaminArgueta\\Documents\\Proyectos Practicas\\Inventario-Equipos\\src\\InventarioEquipos.Api\\InventarioEquipos.Api.csproj": {}
   },
   "projects": {
-    "C:\\Users\\AngelGrijalva\\Documents\\Proyectos SLC\\InventarioEquipos\\src\\InventarioEquipos.Api\\InventarioEquipos.Api.csproj": {
+    "C:\\Users\\BenjaminArgueta\\Documents\\Proyectos Practicas\\Inventario-Equipos\\src\\InventarioEquipos.Api\\InventarioEquipos.Api.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\AngelGrijalva\\Documents\\Proyectos SLC\\InventarioEquipos\\src\\InventarioEquipos.Api\\InventarioEquipos.Api.csproj",
+        "projectUniqueName": "C:\\Users\\BenjaminArgueta\\Documents\\Proyectos Practicas\\Inventario-Equipos\\src\\InventarioEquipos.Api\\InventarioEquipos.Api.csproj",
         "projectName": "InventarioEquipos.Api",
-        "projectPath": "C:\\Users\\AngelGrijalva\\Documents\\Proyectos SLC\\InventarioEquipos\\src\\InventarioEquipos.Api\\InventarioEquipos.Api.csproj",
-        "packagesPath": "C:\\Users\\AngelGrijalva\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\AngelGrijalva\\Documents\\Proyectos SLC\\InventarioEquipos\\src\\InventarioEquipos.Api\\obj\\",
+        "projectPath": "C:\\Users\\BenjaminArgueta\\Documents\\Proyectos Practicas\\Inventario-Equipos\\src\\InventarioEquipos.Api\\InventarioEquipos.Api.csproj",
+        "packagesPath": "C:\\Users\\BenjaminArgueta\\AppData\\Local\\Temp\\cursor-sandbox-cache\\2433524b45abdc179bbccf138904e7f3\\nuget",
+        "outputPath": "C:\\Users\\BenjaminArgueta\\Documents\\Proyectos Practicas\\Inventario-Equipos\\src\\InventarioEquipos.Api\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "C:\\Users\\AngelGrijalva\\AppData\\Roaming\\NuGet\\NuGet.Config"
+          "C:\\Users\\BenjaminArgueta\\AppData\\Roaming\\NuGet\\NuGet.Config"
         ],
         "originalTargetFrameworks": [
           "net10.0"

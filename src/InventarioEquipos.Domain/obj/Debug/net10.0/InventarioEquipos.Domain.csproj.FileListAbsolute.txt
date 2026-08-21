@@ -9,3 +9,15 @@ C:\Users\AngelGrijalva\Documents\Proyectos SLC\InventarioEquipos\src\InventarioE
 C:\Users\AngelGrijalva\Documents\Proyectos SLC\InventarioEquipos\src\InventarioEquipos.Domain\obj\Debug\net10.0\refint\InventarioEquipos.Domain.dll
 C:\Users\AngelGrijalva\Documents\Proyectos SLC\InventarioEquipos\src\InventarioEquipos.Domain\obj\Debug\net10.0\InventarioEquipos.Domain.pdb
 C:\Users\AngelGrijalva\Documents\Proyectos SLC\InventarioEquipos\src\InventarioEquipos.Domain\obj\Debug\net10.0\ref\InventarioEquipos.Domain.dll
+C:\Users\BenjaminArgueta\Documents\Proyectos Practicas\Inventario-Equipos\src\InventarioEquipos.Domain\bin\Debug\net10.0\InventarioEquipos.Domain.deps.json
+C:\Users\BenjaminArgueta\Documents\Proyectos Practicas\Inventario-Equipos\src\InventarioEquipos.Domain\bin\Debug\net10.0\InventarioEquipos.Domain.dll
+C:\Users\BenjaminArgueta\Documents\Proyectos Practicas\Inventario-Equipos\src\InventarioEquipos.Domain\bin\Debug\net10.0\InventarioEquipos.Domain.pdb
+C:\Users\BenjaminArgueta\Documents\Proyectos Practicas\Inventario-Equipos\src\InventarioEquipos.Domain\obj\Debug\net10.0\InventarioEquipos.Domain.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\BenjaminArgueta\Documents\Proyectos Practicas\Inventario-Equipos\src\InventarioEquipos.Domain\obj\Debug\net10.0\InventarioEquipos.Domain.AssemblyInfoInputs.cache
+C:\Users\BenjaminArgueta\Documents\Proyectos Practicas\Inventario-Equipos\src\InventarioEquipos.Domain\obj\Debug\net10.0\InventarioEquipos.Domain.AssemblyInfo.cs
+C:\Users\BenjaminArgueta\Documents\Proyectos Practicas\Inventario-Equipos\src\InventarioEquipos.Domain\obj\Debug\net10.0\InventarioEquipos.Domain.csproj.CoreCompileInputs.cache
+C:\Users\BenjaminArgueta\Documents\Proyectos Practicas\Inventario-Equipos\src\InventarioEquipos.Domain\obj\Debug\net10.0\InventarioEquipos.Domain.sourcelink.json
+C:\Users\BenjaminArgueta\Documents\Proyectos Practicas\Inventario-Equipos\src\InventarioEquipos.Domain\obj\Debug\net10.0\InventarioEquipos.Domain.dll
+C:\Users\BenjaminArgueta\Documents\Proyectos Practicas\Inventario-Equipos\src\InventarioEquipos.Domain\obj\Debug\net10.0\refint\InventarioEquipos.Domain.dll
+C:\Users\BenjaminArgueta\Documents\Proyectos Practicas\Inventario-Equipos\src\InventarioEquipos.Domain\obj\Debug\net10.0\InventarioEquipos.Domain.pdb
+C:\Users\BenjaminArgueta\Documents\Proyectos Practicas\Inventario-Equipos\src\InventarioEquipos.Domain\obj\Debug\net10.0\ref\InventarioEquipos.Domain.dll
