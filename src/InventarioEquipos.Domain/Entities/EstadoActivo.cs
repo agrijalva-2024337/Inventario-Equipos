@@ -5,13 +5,13 @@ namespace InventarioEquipos.Domain.Entities;
 /// <summary>
 /// Catálogo de estados posibles de un activo (Disponible, Asignado, En
 /// mantenimiento, etc.) por empresa. Depende de Empresa. Columnas según
-/// el diagrama: id_empresa, nombre, descripcion. Esta tabla no tiene
-/// columna estado propia: ella misma representa esos estados, por eso
-/// no usa Activar/Desactivar ni el enum EstadoRegistro.
+/// el diagrama: id_empresa, nombre, descripcion. El PK del diagrama es
+/// id_estado (no id_estado_activo). Esta tabla no tiene columna estado
+/// propia, por eso no usa Activar/Desactivar ni el enum EstadoRegistro.
 /// </summary>
 public class EstadoActivo : EntityBase
 {
-    public int EmpresaId { get; private set; }
+    public int IdEmpresa { get; private set; }
     public Empresa? Empresa { get; private set; }
 
     public string Nombre { get; private set; } = default!;
@@ -19,37 +19,37 @@ public class EstadoActivo : EntityBase
 
     protected EstadoActivo() { }
 
-    private EstadoActivo(int empresaId, string nombre, string? descripcion)
+    private EstadoActivo(int idEmpresa, string nombre, string? descripcion)
     {
-        EmpresaId = empresaId;
+        IdEmpresa = idEmpresa;
         Nombre = nombre;
         Descripcion = descripcion;
     }
 
-    public static EstadoActivo Crear(int empresaId, string nombre, string? descripcion = null)
+    public static EstadoActivo Crear(int idEmpresa, string nombre, string? descripcion = null)
     {
-        ValidarEmpresaId(empresaId);
+        ValidarIdEmpresa(idEmpresa);
         ValidarNombre(nombre);
         ValidarDescripcion(descripcion);
 
-        return new EstadoActivo(empresaId, nombre.Trim(), descripcion?.Trim());
+        return new EstadoActivo(idEmpresa, nombre.Trim(), descripcion?.Trim());
     }
 
-    public void ActualizarDatos(int empresaId, string nombre, string? descripcion)
+    public void ActualizarDatos(int idEmpresa, string nombre, string? descripcion)
     {
-        ValidarEmpresaId(empresaId);
+        ValidarIdEmpresa(idEmpresa);
         ValidarNombre(nombre);
         ValidarDescripcion(descripcion);
 
-        EmpresaId = empresaId;
+        IdEmpresa = idEmpresa;
         Nombre = nombre.Trim();
         Descripcion = descripcion?.Trim();
     }
 
-    private static void ValidarEmpresaId(int empresaId)
+    private static void ValidarIdEmpresa(int idEmpresa)
     {
-        if (empresaId <= 0)
-            throw new ArgumentException("La empresa es obligatoria.", nameof(empresaId));
+        if (idEmpresa <= 0)
+            throw new ArgumentException("La empresa es obligatoria.", nameof(idEmpresa));
     }
 
     private static void ValidarNombre(string nombre)

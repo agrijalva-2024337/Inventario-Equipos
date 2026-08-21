@@ -117,12 +117,12 @@ public class InventarioEquiposDbContext(DbContextOptions<InventarioEquiposDbCont
 
             entity.HasOne(s => s.Empresa)
                 .WithMany()
-                .HasForeignKey(s => s.EmpresaId)
+                .HasForeignKey(s => s.IdEmpresa)
                 .OnDelete(DeleteBehavior.Restrict);
 
             entity.HasOne(s => s.Pais)
                 .WithMany()
-                .HasForeignKey(s => s.PaisId)
+                .HasForeignKey(s => s.IdPais)
                 .OnDelete(DeleteBehavior.Restrict);
         });
 

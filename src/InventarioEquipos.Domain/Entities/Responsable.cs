@@ -6,7 +6,7 @@ namespace InventarioEquipos.Domain.Entities;
 
 /// <summary>
 /// Responsable de activos, ligado a una empresa y un área. Depende de
-/// Empresa y Area. UsuarioId es opcional: un responsable puede no tener
+/// Empresa y Area. IdUsuario es opcional: un responsable puede no tener
 /// cuenta de acceso al sistema. Columnas según el diagrama: id_empresa,
 /// id_area, id_usuario (nullable), nombre_completo, cargo, correo,
 /// telefono, estado.
@@ -16,13 +16,13 @@ public class Responsable : EntityBase
     private static readonly Regex CorreoRegex =
         new(@"^[^@\s]+@[^@\s]+\.[^@\s]+$", RegexOptions.Compiled);
 
-    public int idEmpresa { get; private set; }
+    public int IdEmpresa { get; private set; }
     public Empresa? Empresa { get; private set; }
 
-    public int idArea { get; private set; }
+    public int IdArea { get; private set; }
     public Area? Area { get; private set; }
 
-    public int? idUsuario { get; private set; }
+    public int? IdUsuario { get; private set; }
     public Usuario? Usuario { get; private set; }
 
     public string NombreCompleto { get; private set; } = default!;
@@ -42,9 +42,9 @@ public class Responsable : EntityBase
         string? correo,
         string? telefono)
     {
-        EmpresaId = idEmpresa;
-        AreaId = idArea;
-        UsuarioId = idUsuario;
+        IdEmpresa = idEmpresa;
+        IdArea = idArea;
+        IdUsuario = idUsuario;
         NombreCompleto = nombreCompleto;
         Cargo = cargo;
         Correo = correo;
@@ -61,16 +61,16 @@ public class Responsable : EntityBase
         string? correo = null,
         string? telefono = null)
     {
-        ValidarEmpresaId(idEmpresa);
-        ValidarAreaId(idArea);
-        ValidarUsuarioId(idUsuario);
+        ValidarIdEmpresa(idEmpresa);
+        ValidarIdArea(idArea);
+        ValidarIdUsuario(idUsuario);
         ValidarNombreCompleto(nombreCompleto);
         ValidarCargo(cargo);
         correo = ValidarCorreoOpcional(correo);
         ValidarTelefono(telefono);
 
         return new Responsable(
-                        idEmpresa,
+            idEmpresa,
             idArea,
             idUsuario,
             nombreCompleto.Trim(),
@@ -88,17 +88,17 @@ public class Responsable : EntityBase
         string? correo,
         string? telefono)
     {
-        ValidarEmpresaId(idEmpresa);
-        ValidarAreaId(idArea);
-        ValidarUsuarioId(idUsuario);
+        ValidarIdEmpresa(idEmpresa);
+        ValidarIdArea(idArea);
+        ValidarIdUsuario(idUsuario);
         ValidarNombreCompleto(nombreCompleto);
         ValidarCargo(cargo);
         correo = ValidarCorreoOpcional(correo);
         ValidarTelefono(telefono);
 
-        EmpresaId = idEmpresa;
-        AreaId = idArea;
-        UsuarioId = idUsuario;
+        IdEmpresa = idEmpresa;
+        IdArea = idArea;
+        IdUsuario = idUsuario;
         NombreCompleto = nombreCompleto.Trim();
         Cargo = cargo?.Trim();
         Correo = correo;
@@ -109,19 +109,19 @@ public class Responsable : EntityBase
 
     public void Desactivar() => Estado = EstadoRegistro.Inactivo;
 
-        private static void ValidarEmpresaId(int idEmpresa)
+    private static void ValidarIdEmpresa(int idEmpresa)
     {
         if (idEmpresa <= 0)
             throw new ArgumentException("La empresa es obligatoria.", nameof(idEmpresa));
     }
 
-    private static void ValidarAreaId(int idArea)
+    private static void ValidarIdArea(int idArea)
     {
         if (idArea <= 0)
             throw new ArgumentException("El área es obligatoria.", nameof(idArea));
     }
 
-    private static void ValidarUsuarioId(int? idUsuario)
+    private static void ValidarIdUsuario(int? idUsuario)
     {
         if (idUsuario is <= 0)
             throw new ArgumentException("El usuario, si se informa, debe ser mayor a 0.", nameof(idUsuario));
