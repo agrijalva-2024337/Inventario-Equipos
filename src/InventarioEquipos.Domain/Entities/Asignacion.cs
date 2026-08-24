@@ -3,46 +3,42 @@ using InventarioEquipos.Domain.Common;
 namespace InventarioEquipos.Domain.Entities;
 
 /// <summary>
-/// Asignación de un Activo a un Responsable, en una Ubicación de uso.
-/// Depende de Activo, Responsable y Ubicacion, por lo que solo puede
-/// mergearse después de que las tres estén en main. Columnas según el
-/// diagrama: id_activo, id_responsable, id_ubicacion_uso, fecha_asignacion,
+/// Asignación de un activo a un responsable y una ubicación de uso.
+/// Depende de Activo, Responsable y Ubicacion. Columnas según el diagrama:
+/// id_activo, id_responsable, id_ubicacion_uso, fecha_asignacion,
 /// entregado_por, recibido_por, fecha_devolucion, activa, observaciones.
+/// El PK del diagrama es id_asignacion. Las FKs se nombran IdActivo /
+/// IdResponsable / IdUbicacionUso para que coincidan con id_activo /
+/// id_responsable / id_ubicacion_uso al pasar a snake_case en el DbContext.
 ///
-/// Las FKs se nombran Id{Entidad} (IdActivo, IdResponsable,
-/// IdUbicacionUso) para que el orden de palabras coincida con el del
-/// diagrama al pasar a snake_case en el DbContext (mismo criterio que
-/// Sede, Ubicacion, Activo, etc.).
+/// El diagrama no incluye columna estado (Activo/Inactivo); el ciclo de
+/// vida lo expresa el bit Activa (1 = vigente, 0 = devuelta).
 ///
-/// Regla de negocio del DERCAS que NO se valida aquí porque cruza varias
-/// filas ("un activo solamente podrá tener una asignación activa"): se
-/// garantiza con un índice único filtrado en Persistence
-/// (IdActivo único WHERE activa = 1), y/o revisando en el servicio de
-/// aplicación que no exista ya una asignación activa para ese Activo antes
-/// de llamar Crear(...).
+/// Reglas de negocio del DERCAS que NO se validan aquí porque cruzan
+/// varias filas / varias entidades (van en Application):
+/// - "Un activo dado de baja no podrá asignarse, trasladarse ni enviarse
+///   a mantenimiento": requiere conocer el catálogo EstadoActivo vigente.
+/// - No puede haber dos asignaciones activas del mismo activo a la vez.
+/// - Actualizar el responsable actual del activo se hace con
+///   Activo.ActualizarResponsableActual después de registrar o devolver
+///   la asignación, no dentro de esta entidad aislada.
 /// </summary>
 public class Asignacion : EntityBase
 {
     public int IdActivo { get; private set; }
     public Activo? Activo { get; private set; }
 
-    /// <summary>Persona a la que se le asigna el activo.</summary>
     public int IdResponsable { get; private set; }
     public Responsable? Responsable { get; private set; }
 
-    /// <summary>Ubicación donde se va a usar el activo (puede diferir de la ubicación "de resguardo").</summary>
     public int IdUbicacionUso { get; private set; }
     public Ubicacion? UbicacionUso { get; private set; }
 
     public DateTime FechaAsignacion { get; private set; }
     public string EntregadoPor { get; private set; } = default!;
     public string RecibidoPor { get; private set; } = default!;
-
     public DateTime? FechaDevolucion { get; private set; }
-
-    /// <summary>true mientras el activo sigue en manos de este responsable; false una vez devuelto.</summary>
     public bool Activa { get; private set; }
-
     public string? Observaciones { get; private set; }
 
     protected Asignacion() { }
@@ -51,17 +47,21 @@ public class Asignacion : EntityBase
         int idActivo,
         int idResponsable,
         int idUbicacionUso,
+        DateTime fechaAsignacion,
         string entregadoPor,
         string recibidoPor,
+        DateTime? fechaDevolucion,
+        bool activa,
         string? observaciones)
     {
         IdActivo = idActivo;
         IdResponsable = idResponsable;
         IdUbicacionUso = idUbicacionUso;
-        FechaAsignacion = DateTime.UtcNow;
+        FechaAsignacion = fechaAsignacion;
         EntregadoPor = entregadoPor;
         RecibidoPor = recibidoPor;
-        Activa = true;
+        FechaDevolucion = fechaDevolucion;
+        Activa = activa;
         Observaciones = observaciones;
     }
 
@@ -71,43 +71,39 @@ public class Asignacion : EntityBase
         int idUbicacionUso,
         string entregadoPor,
         string recibidoPor,
-        string? observaciones = null)
+        string? observaciones = null,
+        DateTime? fechaAsignacion = null)
     {
         ValidarIdActivo(idActivo);
         ValidarIdResponsable(idResponsable);
         ValidarIdUbicacionUso(idUbicacionUso);
-        ValidarEntregadoPor(entregadoPor);
-        ValidarRecibidoPor(recibidoPor);
-        ValidarObservaciones(observaciones);
 
         return new Asignacion(
             idActivo,
             idResponsable,
             idUbicacionUso,
-            entregadoPor.Trim(),
-            recibidoPor.Trim(),
-            observaciones?.Trim());
+            ResolverFechaAsignacion(fechaAsignacion),
+            ValidarNombrePersona(entregadoPor, nameof(entregadoPor), "Quién entrega"),
+            ValidarNombrePersona(recibidoPor, nameof(recibidoPor), "Quién recibe"),
+            fechaDevolucion: null,
+            activa: true,
+            NormalizarObservaciones(observaciones));
     }
 
     /// <summary>
-    /// Marca la asignación como devuelta. Una vez devuelta, deja de contar
-    /// como "asignación activa" del activo (Activo.IdResponsable debería
-    /// limpiarse aparte, desde el servicio de aplicación que orquesta la
-    /// devolución, ya que Activo es una entidad/aggregate distinta).
+    /// Marca la asignación como devuelta. La fecha de devolución, si no se
+    /// informa, se toma como la fecha/hora UTC actual.
     /// </summary>
-    public void Devolver(DateTime? fechaDevolucion = null)
+    public void Devolver(DateTime? fechaDevolucion = null, string? observaciones = null)
     {
         if (!Activa)
-            throw new InvalidOperationException("Esta asignación ya fue devuelta anteriormente.");
+            throw new InvalidOperationException("La asignación ya está devuelta.");
 
-        FechaDevolucion = fechaDevolucion ?? DateTime.UtcNow;
+        var fecha = ResolverFechaDevolucion(fechaDevolucion, FechaAsignacion);
+        FechaDevolucion = fecha;
         Activa = false;
-    }
-
-    public void ActualizarObservaciones(string? observaciones)
-    {
-        ValidarObservaciones(observaciones);
-        Observaciones = observaciones?.Trim();
+        if (observaciones is not null)
+            Observaciones = NormalizarObservaciones(observaciones);
     }
 
     private static void ValidarIdActivo(int idActivo)
@@ -128,25 +124,51 @@ public class Asignacion : EntityBase
             throw new ArgumentException("La ubicación de uso es obligatoria.", nameof(idUbicacionUso));
     }
 
-    private static void ValidarEntregadoPor(string entregadoPor)
+    private static DateTime ResolverFechaAsignacion(DateTime? fechaAsignacion)
     {
-        if (string.IsNullOrWhiteSpace(entregadoPor))
-            throw new ArgumentException("Quién entrega el activo es obligatorio.", nameof(entregadoPor));
-        if (entregadoPor.Length > 150)
-            throw new ArgumentException("\"Entregado por\" no puede exceder 150 caracteres.", nameof(entregadoPor));
+        var fecha = fechaAsignacion ?? DateTime.UtcNow;
+        if (fecha == default)
+            throw new ArgumentException("La fecha de asignación no es válida.", nameof(fechaAsignacion));
+        if (fecha > DateTime.UtcNow.AddMinutes(1))
+            throw new ArgumentException("La fecha de asignación no puede ser futura.", nameof(fechaAsignacion));
+
+        return fecha;
     }
 
-    private static void ValidarRecibidoPor(string recibidoPor)
+    private static DateTime ResolverFechaDevolucion(DateTime? fechaDevolucion, DateTime fechaAsignacion)
     {
-        if (string.IsNullOrWhiteSpace(recibidoPor))
-            throw new ArgumentException("Quién recibe el activo es obligatorio.", nameof(recibidoPor));
-        if (recibidoPor.Length > 150)
-            throw new ArgumentException("\"Recibido por\" no puede exceder 150 caracteres.", nameof(recibidoPor));
+        var fecha = fechaDevolucion ?? DateTime.UtcNow;
+        if (fecha == default)
+            throw new ArgumentException("La fecha de devolución no es válida.", nameof(fechaDevolucion));
+        if (fecha < fechaAsignacion)
+            throw new ArgumentException("La fecha de devolución no puede ser anterior a la de asignación.", nameof(fechaDevolucion));
+        if (fecha > DateTime.UtcNow.AddMinutes(1))
+            throw new ArgumentException("La fecha de devolución no puede ser futura.", nameof(fechaDevolucion));
+
+        return fecha;
     }
 
-    private static void ValidarObservaciones(string? observaciones)
+    private static string ValidarNombrePersona(string valor, string paramName, string etiqueta)
     {
-        if (observaciones is not null && observaciones.Trim().Length > 300)
+        if (string.IsNullOrWhiteSpace(valor))
+            throw new ArgumentException($"{etiqueta} es obligatorio.", paramName);
+
+        valor = valor.Trim();
+        if (valor.Length > 150)
+            throw new ArgumentException($"{etiqueta} no puede exceder 150 caracteres.", paramName);
+
+        return valor;
+    }
+
+    private static string? NormalizarObservaciones(string? observaciones)
+    {
+        if (string.IsNullOrWhiteSpace(observaciones))
+            return null;
+
+        observaciones = observaciones.Trim();
+        if (observaciones.Length > 300)
             throw new ArgumentException("Las observaciones no pueden exceder 300 caracteres.", nameof(observaciones));
+
+        return observaciones;
     }
 }

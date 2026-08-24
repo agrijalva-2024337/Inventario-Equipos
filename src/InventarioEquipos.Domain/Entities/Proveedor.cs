@@ -6,7 +6,8 @@ namespace InventarioEquipos.Domain.Entities;
 
 /// <summary>
 /// Proveedor de una empresa. Depende de Empresa. Columnas según el
-/// diagrama: id_empresa, nombre, nit, contacto, telefono, correo, estado.
+/// diagrama: id_empresa, nombre, nit, contacto, telefono (NOT NULL),
+/// correo, estado.
 /// </summary>
 public class Proveedor : EntityBase
 {
@@ -19,7 +20,7 @@ public class Proveedor : EntityBase
     public string Nombre { get; private set; } = default!;
     public string? Nit { get; private set; }
     public string? Contacto { get; private set; }
-    public string? Telefono { get; private set; }
+    public string Telefono { get; private set; } = default!;
     public string? Correo { get; private set; }
     public EstadoRegistro Estado { get; private set; }
 
@@ -30,7 +31,7 @@ public class Proveedor : EntityBase
         string nombre,
         string? nit,
         string? contacto,
-        string? telefono,
+        string telefono,
         string? correo)
     {
         IdEmpresa = idEmpresa;
@@ -45,9 +46,9 @@ public class Proveedor : EntityBase
     public static Proveedor Crear(
         int idEmpresa,
         string nombre,
+        string telefono,
         string? nit = null,
         string? contacto = null,
-        string? telefono = null,
         string? correo = null)
     {
         ValidarIdEmpresa(idEmpresa);
@@ -62,16 +63,16 @@ public class Proveedor : EntityBase
             nombre.Trim(),
             nit?.Trim(),
             contacto?.Trim(),
-            telefono?.Trim(),
+            telefono.Trim(),
             correo);
     }
 
     public void ActualizarDatos(
         int idEmpresa,
         string nombre,
+        string telefono,
         string? nit,
         string? contacto,
-        string? telefono,
         string? correo)
     {
         ValidarIdEmpresa(idEmpresa);
@@ -85,7 +86,7 @@ public class Proveedor : EntityBase
         Nombre = nombre.Trim();
         Nit = nit?.Trim();
         Contacto = contacto?.Trim();
-        Telefono = telefono?.Trim();
+        Telefono = telefono.Trim();
         Correo = correo;
     }
 
@@ -119,9 +120,11 @@ public class Proveedor : EntityBase
             throw new ArgumentException("El contacto no puede exceder 100 caracteres.", nameof(contacto));
     }
 
-    private static void ValidarTelefono(string? telefono)
+    private static void ValidarTelefono(string telefono)
     {
-        if (telefono is not null && telefono.Trim().Length > 30)
+        if (string.IsNullOrWhiteSpace(telefono))
+            throw new ArgumentException("El teléfono es obligatorio.", nameof(telefono));
+        if (telefono.Trim().Length > 30)
             throw new ArgumentException("El teléfono no puede exceder 30 caracteres.", nameof(telefono));
     }
 
