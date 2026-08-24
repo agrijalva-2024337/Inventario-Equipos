@@ -15,8 +15,8 @@ CREATE TABLE  Pais(
 	nombre VARCHAR (100) NOT NULL,
 	codigo_iso2 VARCHAR(2) NOT NULL,
 	codigo_iso3 VARCHAR(3) NOT NULL,
-	codigot_telefonico VARCHAR(5),
-	moneda_local VARCHAR(10),
+	codigot_telefonico VARCHAR(5) NOT NULL,
+	moneda_local VARCHAR(10) NOT NULL,
 	estado VARCHAR(20) NOT NULL DEFAULT 'Activo'
 );
 GO
@@ -42,7 +42,7 @@ CREATE TABLE Empresa(
 	id_empresa INT IDENTITY(1,1) PRIMARY KEY,
 	nombre VARCHAR(150) NOT NULL,
 	nit_codigo VARCHAR(50) NOT NULL,
-	direccion VARCHAR(50) NOT NULL,
+	direccion VARCHAR(200) NULL,
 	telefono VARCHAR(30),
 	estado VARCHAR(20) NOT NULL DEFAULT 'Activo',
 	fecha_creacion DATETIME NOT NULL DEFAULT GETDATE(),
@@ -72,8 +72,8 @@ CREATE TABLE Sede(
 	id_empresa INT NOT NULL,
 	id_pais INT NOT NULL,
 	nombre VARCHAR(100) NOT NULL,
-	direccion VARCHAR(100) NOT NULL,
-	ciudad VARCHAR(100) NOT NULL,
+	direccion VARCHAR(100) NULL,
+	ciudad VARCHAR(100) NULL,
 	estado VARCHAR(20) NOT NULL DEFAULT 'Activo',
 	CONSTRAINT FK_Sede_Empresa FOREIGN KEY (id_empresa) REFERENCES Empresa(id_empresa),
 	CONSTRAINT FK_Sede_Pais FOREIGN KEY (id_pais) REFERENCES Pais(id_pais)
@@ -112,9 +112,9 @@ CREATE TABLE Responsable(
 	id_area INT NOT NULL,
 	id_usuario INT NULL,
 	nombre_completo VARCHAR(150) NOT NULL,
-	cargo VARCHAR(100) NOT NULL,
-	correo VARCHAR(150) NOT NULL,
-	telefono VARCHAR(30) NOT NULL,
+	cargo VARCHAR(100) NULL,
+	correo VARCHAR(150) NULL,
+	telefono VARCHAR(30) NULL,
 	estado VARCHAR(20) NOT NULL DEFAULT 'Activo',
 	CONSTRAINT FK_Responsable_Empresa FOREIGN KEY (id_empresa) REFERENCES Empresa(id_empresa),
 	CONSTRAINT FK_Responsable_Usuario FOREIGN KEY (id_Usuario) REFERENCES Usuario(id_usuario)
@@ -174,7 +174,7 @@ CREATE TABLE Proveedor(
 	nombre VARCHAR(150) NOT NULL,
 	nit VARCHAR(50),
 	contacto VARCHAR(100),
-	telefono VARCHAR(30) NOT NULL,
+	telefono VARCHAR(30) NULL,
 	correo VARCHAR(150),
 	estado VARCHAR(20) NOT NULL DEFAULT 'Activo',
 	CONSTRAINT FK_Proveedor_Empresa FOREIGN KEY (id_empresa) REFERENCES Empresa(id_empresa)

@@ -30,7 +30,7 @@ public class InventarioEquiposDbContext(DbContextOptions<InventarioEquiposDbCont
             entity.Property(e => e.Id).ValueGeneratedOnAdd();
             entity.Property(e => e.Nombre).IsRequired().HasMaxLength(150);
             entity.Property(e => e.NitCodigo).IsRequired().HasMaxLength(50);
-            entity.Property(e => e.Direccion).IsRequired().HasMaxLength(50);
+            entity.Property(e => e.Direccion).HasMaxLength(200);
             entity.Property(e => e.Telefono).HasMaxLength(30);
             entity.Property(e => e.Estado).HasConversion<string>().HasMaxLength(20);
 
@@ -44,8 +44,8 @@ public class InventarioEquiposDbContext(DbContextOptions<InventarioEquiposDbCont
             entity.Property(e => e.Nombre).IsRequired().HasMaxLength(100);
             entity.Property(e => e.CodigoIso2).IsRequired().HasMaxLength(2);
             entity.Property(e => e.CodigoIso3).IsRequired().HasMaxLength(3);
-            entity.Property(e => e.CodigoTelefonico).HasMaxLength(5);
-            entity.Property(e => e.MonedaLocal).HasMaxLength(10);
+            entity.Property(e => e.CodigoTelefonico).IsRequired().HasMaxLength(5);
+            entity.Property(e => e.MonedaLocal).IsRequired().HasMaxLength(10);
             entity.Property(e => e.Estado).HasConversion<string>().HasMaxLength(20);
 
             entity.HasIndex(e => e.CodigoIso2).IsUnique();
@@ -111,8 +111,8 @@ public class InventarioEquiposDbContext(DbContextOptions<InventarioEquiposDbCont
             entity.HasKey(e => e.Id);
             entity.Property(e => e.Id).ValueGeneratedOnAdd();
             entity.Property(e => e.Nombre).IsRequired().HasMaxLength(100);
-            entity.Property(e => e.Direccion).IsRequired().HasMaxLength(100);
-            entity.Property(e => e.Ciudad).IsRequired().HasMaxLength(100);
+            entity.Property(e => e.Direccion).HasMaxLength(100);
+            entity.Property(e => e.Ciudad).HasMaxLength(100);
             entity.Property(e => e.Estado).HasConversion<string>().HasMaxLength(20);
 
             entity.HasOne(s => s.Empresa)

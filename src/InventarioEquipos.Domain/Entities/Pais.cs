@@ -6,15 +6,15 @@ namespace InventarioEquipos.Domain.Entities;
 /// <summary>
 /// Catálogo de países. No depende de Empresa. Columnas según el diagrama:
 /// nombre, codigo_iso2, codigo_iso3, codigo_telefonico, moneda_local, estado.
-/// codigo_telefonico (VARCHAR 5) y moneda_local (VARCHAR 10) son opcionales.
+/// codigo_telefonico (VARCHAR 5) y moneda_local (VARCHAR 10) son obligatorios.
 /// </summary>
 public class Pais : EntityBase
 {
     public string Nombre { get; private set; } = default!;
     public string CodigoIso2 { get; private set; } = default!;
     public string CodigoIso3 { get; private set; } = default!;
-    public string? CodigoTelefonico { get; private set; }
-    public string? MonedaLocal { get; private set; }
+    public string CodigoTelefonico { get; private set; } = default!;
+    public string MonedaLocal { get; private set; } = default!;
     public EstadoRegistro Estado { get; private set; }
 
     protected Pais() { }
@@ -23,8 +23,8 @@ public class Pais : EntityBase
         string nombre,
         string codigoIso2,
         string codigoIso3,
-        string? codigoTelefonico,
-        string? monedaLocal)
+        string codigoTelefonico,
+        string monedaLocal)
     {
         Nombre = nombre;
         CodigoIso2 = codigoIso2;
@@ -38,8 +38,8 @@ public class Pais : EntityBase
         string nombre,
         string codigoIso2,
         string codigoIso3,
-        string? codigoTelefonico = null,
-        string? monedaLocal = null)
+        string codigoTelefonico,
+        string monedaLocal)
     {
         ValidarNombre(nombre);
         codigoIso2 = ValidarCodigoIso(codigoIso2, 2, nameof(codigoIso2));
@@ -49,24 +49,24 @@ public class Pais : EntityBase
             nombre.Trim(),
             codigoIso2,
             codigoIso3,
-            NormalizarCodigoTelefonico(codigoTelefonico),
-            NormalizarMonedaLocal(monedaLocal));
+            ValidarCodigoTelefonico(codigoTelefonico),
+            ValidarMonedaLocal(monedaLocal));
     }
 
     public void ActualizarDatos(
         string nombre,
         string codigoIso2,
         string codigoIso3,
-        string? codigoTelefonico,
-        string? monedaLocal)
+        string codigoTelefonico,
+        string monedaLocal)
     {
         ValidarNombre(nombre);
 
         Nombre = nombre.Trim();
         CodigoIso2 = ValidarCodigoIso(codigoIso2, 2, nameof(codigoIso2));
         CodigoIso3 = ValidarCodigoIso(codigoIso3, 3, nameof(codigoIso3));
-        CodigoTelefonico = NormalizarCodigoTelefonico(codigoTelefonico);
-        MonedaLocal = NormalizarMonedaLocal(monedaLocal);
+        CodigoTelefonico = ValidarCodigoTelefonico(codigoTelefonico);
+        MonedaLocal = ValidarMonedaLocal(monedaLocal);
     }
 
     public void Activar() => Estado = EstadoRegistro.Activo;
@@ -89,10 +89,10 @@ public class Pais : EntityBase
         return codigo.Trim().ToUpperInvariant();
     }
 
-    private static string? NormalizarCodigoTelefonico(string? codigoTelefonico)
+    private static string ValidarCodigoTelefonico(string codigoTelefonico)
     {
         if (string.IsNullOrWhiteSpace(codigoTelefonico))
-            return null;
+            throw new ArgumentException("El código telefónico es obligatorio.", nameof(codigoTelefonico));
 
         codigoTelefonico = codigoTelefonico.Trim();
         if (codigoTelefonico.Length > 5)
@@ -101,10 +101,10 @@ public class Pais : EntityBase
         return codigoTelefonico;
     }
 
-    private static string? NormalizarMonedaLocal(string? monedaLocal)
+    private static string ValidarMonedaLocal(string monedaLocal)
     {
         if (string.IsNullOrWhiteSpace(monedaLocal))
-            return null;
+            throw new ArgumentException("La moneda local es obligatoria.", nameof(monedaLocal));
 
         monedaLocal = monedaLocal.Trim().ToUpperInvariant();
         if (monedaLocal.Length > 10)
