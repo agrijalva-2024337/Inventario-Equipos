@@ -9,7 +9,7 @@ namespace InventarioEquipos.Domain.Entities;
 /// Empresa y Area. IdUsuario es opcional: un responsable puede no tener
 /// cuenta de acceso al sistema. Columnas según el diagrama: id_empresa,
 /// id_area, id_usuario (nullable), nombre_completo, cargo, correo,
-/// telefono (los tres últimos NOT NULL), estado.
+/// telefono (los tres últimos opcionales), estado.
 /// </summary>
 public class Responsable : EntityBase
 {
@@ -26,9 +26,9 @@ public class Responsable : EntityBase
     public Usuario? Usuario { get; private set; }
 
     public string NombreCompleto { get; private set; } = default!;
-    public string Cargo { get; private set; } = default!;
-    public string Correo { get; private set; } = default!;
-    public string Telefono { get; private set; } = default!;
+    public string? Cargo { get; private set; }
+    public string? Correo { get; private set; }
+    public string? Telefono { get; private set; }
     public EstadoRegistro Estado { get; private set; }
 
     protected Responsable() { }
@@ -38,9 +38,9 @@ public class Responsable : EntityBase
         int idArea,
         int? idUsuario,
         string nombreCompleto,
-        string cargo,
-        string correo,
-        string telefono)
+        string? cargo,
+        string? correo,
+        string? telefono)
     {
         IdEmpresa = idEmpresa;
         IdArea = idArea;
@@ -56,9 +56,9 @@ public class Responsable : EntityBase
         int idEmpresa,
         int idArea,
         string nombreCompleto,
-        string cargo,
-        string correo,
-        string telefono,
+        string? cargo = null,
+        string? correo = null,
+        string? telefono = null,
         int? idUsuario = null)
     {
         ValidarIdEmpresa(idEmpresa);
@@ -66,7 +66,7 @@ public class Responsable : EntityBase
         ValidarIdUsuario(idUsuario);
         ValidarNombreCompleto(nombreCompleto);
         ValidarCargo(cargo);
-        correo = ValidarCorreo(correo);
+        correo = ValidarCorreoOpcional(correo);
         ValidarTelefono(telefono);
 
         return new Responsable(
@@ -74,18 +74,18 @@ public class Responsable : EntityBase
             idArea,
             idUsuario,
             nombreCompleto.Trim(),
-            cargo.Trim(),
+            NormalizarOpcional(cargo),
             correo,
-            telefono.Trim());
+            NormalizarOpcional(telefono));
     }
 
     public void ActualizarDatos(
         int idEmpresa,
         int idArea,
         string nombreCompleto,
-        string cargo,
-        string correo,
-        string telefono,
+        string? cargo,
+        string? correo,
+        string? telefono,
         int? idUsuario)
     {
         ValidarIdEmpresa(idEmpresa);
@@ -93,16 +93,16 @@ public class Responsable : EntityBase
         ValidarIdUsuario(idUsuario);
         ValidarNombreCompleto(nombreCompleto);
         ValidarCargo(cargo);
-        correo = ValidarCorreo(correo);
+        correo = ValidarCorreoOpcional(correo);
         ValidarTelefono(telefono);
 
         IdEmpresa = idEmpresa;
         IdArea = idArea;
         IdUsuario = idUsuario;
         NombreCompleto = nombreCompleto.Trim();
-        Cargo = cargo.Trim();
+        Cargo = NormalizarOpcional(cargo);
         Correo = correo;
-        Telefono = telefono.Trim();
+        Telefono = NormalizarOpcional(telefono);
     }
 
     public void Activar() => Estado = EstadoRegistro.Activo;
@@ -135,27 +135,30 @@ public class Responsable : EntityBase
             throw new ArgumentException("El nombre completo no puede exceder 150 caracteres.", nameof(nombreCompleto));
     }
 
-    private static void ValidarCargo(string cargo)
+    private static void ValidarCargo(string? cargo)
     {
-        if (string.IsNullOrWhiteSpace(cargo))
-            throw new ArgumentException("El cargo es obligatorio.", nameof(cargo));
-        if (cargo.Trim().Length > 100)
+        if (cargo is not null && cargo.Trim().Length > 100)
             throw new ArgumentException("El cargo no puede exceder 100 caracteres.", nameof(cargo));
     }
 
-    private static string ValidarCorreo(string correo)
+    private static string? ValidarCorreoOpcional(string? correo)
     {
-        if (string.IsNullOrWhiteSpace(correo) || correo.Trim().Length > 150 || !CorreoRegex.IsMatch(correo.Trim()))
+        if (string.IsNullOrWhiteSpace(correo))
+            return null;
+
+        correo = correo.Trim().ToLowerInvariant();
+        if (correo.Length > 150 || !CorreoRegex.IsMatch(correo))
             throw new ArgumentException("El correo no tiene un formato válido.", nameof(correo));
 
-        return correo.Trim().ToLowerInvariant();
+        return correo;
     }
 
-    private static void ValidarTelefono(string telefono)
+    private static void ValidarTelefono(string? telefono)
     {
-        if (string.IsNullOrWhiteSpace(telefono))
-            throw new ArgumentException("El teléfono es obligatorio.", nameof(telefono));
-        if (telefono.Trim().Length > 30)
+        if (telefono is not null && telefono.Trim().Length > 30)
             throw new ArgumentException("El teléfono no puede exceder 30 caracteres.", nameof(telefono));
     }
+
+    private static string? NormalizarOpcional(string? valor)
+        => string.IsNullOrWhiteSpace(valor) ? null : valor.Trim();
 }

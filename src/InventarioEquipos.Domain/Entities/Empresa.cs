@@ -7,13 +7,13 @@ namespace InventarioEquipos.Domain.Entities;
 /// Empresa: entidad raíz del núcleo multiempresa. Casi todas las demás
 /// entidades del sistema tendrán FK hacia Empresa (id_empresa), por eso
 /// va primero. Columnas según el diagrama: nombre, nit_codigo, direccion
-/// (VARCHAR 50 NOT NULL), telefono (opcional), estado, fecha_creacion.
+/// (VARCHAR 200, opcional), telefono (opcional), estado, fecha_creacion.
 /// </summary>
 public class Empresa : EntityBase
 {
     public string Nombre { get; private set; } = default!;
     public string NitCodigo { get; private set; } = default!;
-    public string Direccion { get; private set; } = default!;
+    public string? Direccion { get; private set; }
     public string? Telefono { get; private set; }
     public EstadoRegistro Estado { get; private set; }
     public DateTime FechaCreacion { get; private set; }
@@ -23,7 +23,7 @@ public class Empresa : EntityBase
     private Empresa(
         string nombre,
         string nitCodigo,
-        string direccion,
+        string? direccion,
         string? telefono)
     {
         Nombre = nombre;
@@ -37,7 +37,7 @@ public class Empresa : EntityBase
     public static Empresa Crear(
         string nombre,
         string nitCodigo,
-        string direccion,
+        string? direccion = null,
         string? telefono = null)
     {
         ValidarNombre(nombre);
@@ -45,13 +45,13 @@ public class Empresa : EntityBase
         ValidarDireccion(direccion);
         ValidarTelefono(telefono);
 
-        return new Empresa(nombre.Trim(), nitCodigo.Trim(), direccion.Trim(), NormalizarTelefono(telefono));
+        return new Empresa(nombre.Trim(), nitCodigo.Trim(), NormalizarDireccion(direccion), NormalizarTelefono(telefono));
     }
 
     public void ActualizarDatos(
         string nombre,
         string nitCodigo,
-        string direccion,
+        string? direccion,
         string? telefono)
     {
         ValidarNombre(nombre);
@@ -61,7 +61,7 @@ public class Empresa : EntityBase
 
         Nombre = nombre.Trim();
         NitCodigo = nitCodigo.Trim();
-        Direccion = direccion.Trim();
+        Direccion = NormalizarDireccion(direccion);
         Telefono = NormalizarTelefono(telefono);
     }
 
@@ -85,13 +85,14 @@ public class Empresa : EntityBase
             throw new ArgumentException("El NIT/código no puede exceder 50 caracteres.", nameof(nitCodigo));
     }
 
-    private static void ValidarDireccion(string direccion)
+    private static void ValidarDireccion(string? direccion)
     {
-        if (string.IsNullOrWhiteSpace(direccion))
-            throw new ArgumentException("La dirección de la empresa es obligatoria.", nameof(direccion));
-        if (direccion.Trim().Length > 50)
-            throw new ArgumentException("La dirección de la empresa no puede exceder 50 caracteres.", nameof(direccion));
+        if (direccion is not null && direccion.Trim().Length > 200)
+            throw new ArgumentException("La dirección de la empresa no puede exceder 200 caracteres.", nameof(direccion));
     }
+
+    private static string? NormalizarDireccion(string? direccion)
+        => string.IsNullOrWhiteSpace(direccion) ? null : direccion.Trim();
 
     private static void ValidarTelefono(string? telefono)
     {
