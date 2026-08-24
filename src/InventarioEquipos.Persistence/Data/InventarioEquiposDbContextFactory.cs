@@ -26,8 +26,8 @@ public class InventarioEquiposDbContextFactory : IDesignTimeDbContextFactory<Inv
         // necesitas distinta (server/instancia, usuario/password, etc.).
         // Solo se usa para que dotnet ef pueda construir el modelo y
         // generar el SQL de la migración; no requiere que la base exista.
-        optionsBuilder.UseSqlServer(
-            "Server=localhost;Database=InventarioEquipos;Trusted_Connection=True;TrustServerCertificate=True;");
+       optionsBuilder.UseSqlServer(
+            "Server=localhost\\SQLEXPRESS;Database=InventarioEquipos;Trusted_Connection=True;TrustServerCertificate=True;");
 
         return new InventarioEquiposDbContext(optionsBuilder.Options);
     }
