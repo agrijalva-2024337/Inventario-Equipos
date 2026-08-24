@@ -22,9 +22,9 @@ namespace InventarioEquipos.Domain.Entities;
 ///   a mantenimiento": requiere conocer el catálogo EstadoActivo vigente.
 /// - El origen debe coincidir con la ubicación actual del activo.
 /// - Destino (y origen) deben existir y estar activos en Ubicacion.
-/// - Actualizar la ubicación actual del activo (Sede/Ubicacion/Area) se
-///   hace con Activo.ActualizarUbicacionActual después de registrar el
-///   traslado, no dentro de esta entidad aislada.
+/// - Actualizar la ubicación actual del activo (Sede/Ubicacion y Área
+///   opcional) se hace con Activo.ActualizarUbicacionActual después de
+///   registrar el traslado, no dentro de esta entidad aislada.
 /// </summary>
 public class Traslado : EntityBase
 {

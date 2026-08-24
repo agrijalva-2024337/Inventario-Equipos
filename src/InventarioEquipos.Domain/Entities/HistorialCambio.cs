@@ -10,14 +10,15 @@ namespace InventarioEquipos.Domain.Entities;
 /// expone métodos de edición como las demás entidades. Columnas según el
 /// diagrama: id_usuario, id_empresa, fecha_hora, tipo_operacion,
 /// entidad_afectada, id_registro_afectado, informacion_anterior,
-/// informacion_nueva.
+/// informacion_nueva. Las FKs se nombran IdUsuario / IdEmpresa para que
+/// coincidan con id_usuario / id_empresa al pasar a snake_case.
 /// </summary>
 public class HistorialCambio : EntityBase
 {
-    public int UsuarioId { get; private set; }
+    public int IdUsuario { get; private set; }
     public Usuario? Usuario { get; private set; }
 
-    public int EmpresaId { get; private set; }
+    public int IdEmpresa { get; private set; }
     public Empresa? Empresa { get; private set; }
 
     public DateTime FechaHora { get; private set; }
@@ -39,16 +40,16 @@ public class HistorialCambio : EntityBase
     protected HistorialCambio() { }
 
     private HistorialCambio(
-        int usuarioId,
-        int empresaId,
+        int idUsuario,
+        int idEmpresa,
         TipoOperacionHistorial tipoOperacion,
         string entidadAfectada,
         int idRegistroAfectado,
         string? informacionAnterior,
         string? informacionNueva)
     {
-        UsuarioId = usuarioId;
-        EmpresaId = empresaId;
+        IdUsuario = idUsuario;
+        IdEmpresa = idEmpresa;
         FechaHora = DateTime.UtcNow;
         TipoOperacion = tipoOperacion;
         EntidadAfectada = entidadAfectada;
@@ -58,18 +59,18 @@ public class HistorialCambio : EntityBase
     }
 
     public static HistorialCambio Registrar(
-        int usuarioId,
-        int empresaId,
+        int idUsuario,
+        int idEmpresa,
         TipoOperacionHistorial tipoOperacion,
         string entidadAfectada,
         int idRegistroAfectado,
         string? informacionAnterior,
         string? informacionNueva)
     {
-        if (usuarioId <= 0)
-            throw new ArgumentException("El usuario que ejecuta la operación es obligatorio.", nameof(usuarioId));
-        if (empresaId <= 0)
-            throw new ArgumentException("La empresa es obligatoria.", nameof(empresaId));
+        if (idUsuario <= 0)
+            throw new ArgumentException("El usuario que ejecuta la operación es obligatorio.", nameof(idUsuario));
+        if (idEmpresa <= 0)
+            throw new ArgumentException("La empresa es obligatoria.", nameof(idEmpresa));
         if (string.IsNullOrWhiteSpace(entidadAfectada))
             throw new ArgumentException("La entidad afectada es obligatoria.", nameof(entidadAfectada));
         if (entidadAfectada.Length > 100)
@@ -83,8 +84,8 @@ public class HistorialCambio : EntityBase
             throw new ArgumentException("Una eliminación debe incluir la información anterior.", nameof(informacionAnterior));
 
         return new HistorialCambio(
-            usuarioId,
-            empresaId,
+            idUsuario,
+            idEmpresa,
             tipoOperacion,
             entidadAfectada.Trim(),
             idRegistroAfectado,

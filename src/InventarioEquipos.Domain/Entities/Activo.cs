@@ -4,20 +4,24 @@ namespace InventarioEquipos.Domain.Entities;
 
 /// <summary>
 /// Activo físico de una empresa: el corazón del sistema de inventario.
-/// Depende de Empresa, CategoriaActivo, Sede, Ubicacion, Area y
-/// EstadoActivo (todas obligatorias) y de Proveedor y Responsable
-/// (opcionales: un activo puede registrarse sin proveedor conocido o sin
-/// responsable asignado todavía). Columnas según el diagrama: id_empresa,
-/// codigo_interno, nombre, descripcion, id_categoria, marca, modelo,
-/// numero_serie, fecha_compra, costo_adquisicion, moneda, id_proveedor,
-/// numero_factura, fecha_vencimiento_garantia, id_sede, id_ubicacion,
-/// id_area, id_responsable, id_estado, observaciones.
+/// Depende de Empresa, CategoriaActivo, Sede, Ubicacion y EstadoActivo
+/// (todas obligatorias) y de Proveedor, Area y Responsable (opcionales).
+/// Columnas según el diagrama: id_empresa, codigo_interno, nombre,
+/// descripcion, id_categoria, marca, modelo, numero_serie, fecha_compra,
+/// costo_adquisicion, moneda, id_proveedor, numero_factura,
+/// fecha_vencimiento_garantia, id_sede, id_ubicacion, id_area,
+/// id_responsable, id_estado, observaciones.
+///
+/// Las FKs se nombran IdEmpresa / IdCategoria / IdProveedor / IdSede /
+/// IdUbicacion / IdArea / IdResponsable / IdEstado para que coincidan
+/// con id_empresa / id_categoria / id_proveedor / id_sede / id_ubicacion
+/// / id_area / id_responsable / id_estado al pasar a snake_case.
 ///
 /// Reglas de negocio del DERCAS que NO se validan aquí porque cruzan
 /// varias filas / varias entidades (van en Application):
 /// - "El código interno del activo deberá ser único dentro de la
 ///   empresa": se garantiza con un índice único compuesto
-///   (EmpresaId, CodigoInterno) en la configuración de EF Core.
+///   (IdEmpresa, CodigoInterno) en la configuración de EF Core.
 /// - "Un activo dado de baja no podrá asignarse, trasladarse ni enviarse
 ///   a mantenimiento": requiere conocer el catálogo EstadoActivo vigente,
 ///   se valida en el servicio de aplicación antes de crear una Asignacion,
@@ -25,45 +29,47 @@ namespace InventarioEquipos.Domain.Entities;
 /// </summary>
 public class Activo : EntityBase
 {
-    public int EmpresaId { get; private set; }
+    private const decimal CostoMaximo = 9_999_999_999.99m;
+
+    public int IdEmpresa { get; private set; }
     public Empresa? Empresa { get; private set; }
 
     public string CodigoInterno { get; private set; } = default!;
     public string Nombre { get; private set; } = default!;
-    public string? Descripcion { get; private set; }
+    public string Descripcion { get; private set; } = default!;
 
-    public int CategoriaActivoId { get; private set; }
+    public int IdCategoria { get; private set; }
     public CategoriaActivo? CategoriaActivo { get; private set; }
 
-    public string? Marca { get; private set; }
-    public string? Modelo { get; private set; }
-    public string? NumeroSerie { get; private set; }
+    public string Marca { get; private set; } = default!;
+    public string Modelo { get; private set; } = default!;
+    public string NumeroSerie { get; private set; } = default!;
 
     public DateTime? FechaCompra { get; private set; }
-    public decimal? CostoAdquisicion { get; private set; }
+    public decimal CostoAdquisicion { get; private set; }
     public string? Moneda { get; private set; }
 
-    public int? ProveedorId { get; private set; }
+    public int? IdProveedor { get; private set; }
     public Proveedor? Proveedor { get; private set; }
 
     public string? NumeroFactura { get; private set; }
     public DateTime? FechaVencimientoGarantia { get; private set; }
 
-    public int SedeId { get; private set; }
+    public int IdSede { get; private set; }
     public Sede? Sede { get; private set; }
 
     /// <summary>Ubicación actual del activo (única en un momento dado).</summary>
-    public int UbicacionId { get; private set; }
+    public int IdUbicacion { get; private set; }
     public Ubicacion? Ubicacion { get; private set; }
 
-    public int AreaId { get; private set; }
+    public int? IdArea { get; private set; }
     public Area? Area { get; private set; }
 
     /// <summary>Responsable actual del activo; null si todavía no se ha asignado a nadie.</summary>
-    public int? ResponsableId { get; private set; }
+    public int? IdResponsable { get; private set; }
     public Responsable? Responsable { get; private set; }
 
-    public int EstadoActivoId { get; private set; }
+    public int IdEstado { get; private set; }
     public EstadoActivo? EstadoActivo { get; private set; }
 
     public string? Observaciones { get; private set; }
@@ -71,175 +77,175 @@ public class Activo : EntityBase
     protected Activo() { }
 
     private Activo(
-        int empresaId,
+        int idEmpresa,
         string codigoInterno,
         string nombre,
-        string? descripcion,
-        int categoriaActivoId,
-        string? marca,
-        string? modelo,
-        string? numeroSerie,
+        string descripcion,
+        int idCategoria,
+        string marca,
+        string modelo,
+        string numeroSerie,
         DateTime? fechaCompra,
-        decimal? costoAdquisicion,
+        decimal costoAdquisicion,
         string? moneda,
-        int? proveedorId,
+        int? idProveedor,
         string? numeroFactura,
         DateTime? fechaVencimientoGarantia,
-        int sedeId,
-        int ubicacionId,
-        int areaId,
-        int? responsableId,
-        int estadoActivoId,
+        int idSede,
+        int idUbicacion,
+        int? idArea,
+        int? idResponsable,
+        int idEstado,
         string? observaciones)
     {
-        EmpresaId = empresaId;
+        IdEmpresa = idEmpresa;
         CodigoInterno = codigoInterno;
         Nombre = nombre;
         Descripcion = descripcion;
-        CategoriaActivoId = categoriaActivoId;
+        IdCategoria = idCategoria;
         Marca = marca;
         Modelo = modelo;
         NumeroSerie = numeroSerie;
         FechaCompra = fechaCompra;
         CostoAdquisicion = costoAdquisicion;
         Moneda = moneda;
-        ProveedorId = proveedorId;
+        IdProveedor = idProveedor;
         NumeroFactura = numeroFactura;
         FechaVencimientoGarantia = fechaVencimientoGarantia;
-        SedeId = sedeId;
-        UbicacionId = ubicacionId;
-        AreaId = areaId;
-        ResponsableId = responsableId;
-        EstadoActivoId = estadoActivoId;
+        IdSede = idSede;
+        IdUbicacion = idUbicacion;
+        IdArea = idArea;
+        IdResponsable = idResponsable;
+        IdEstado = idEstado;
         Observaciones = observaciones;
     }
 
     public static Activo Crear(
-        int empresaId,
+        int idEmpresa,
         string codigoInterno,
         string nombre,
-        int categoriaActivoId,
-        int sedeId,
-        int ubicacionId,
-        int areaId,
-        int estadoActivoId,
-        string? descripcion = null,
-        string? marca = null,
-        string? modelo = null,
-        string? numeroSerie = null,
+        string descripcion,
+        int idCategoria,
+        string marca,
+        string modelo,
+        string numeroSerie,
+        decimal costoAdquisicion,
+        int idSede,
+        int idUbicacion,
+        int idEstado,
         DateTime? fechaCompra = null,
-        decimal? costoAdquisicion = null,
         string? moneda = null,
-        int? proveedorId = null,
+        int? idProveedor = null,
         string? numeroFactura = null,
         DateTime? fechaVencimientoGarantia = null,
-        int? responsableId = null,
+        int? idArea = null,
+        int? idResponsable = null,
         string? observaciones = null)
     {
-        ValidarEmpresaId(empresaId);
+        ValidarIdEmpresa(idEmpresa);
         ValidarCodigoInterno(codigoInterno);
         ValidarNombre(nombre);
-        ValidarCategoriaActivoId(categoriaActivoId);
-        ValidarSedeId(sedeId);
-        ValidarUbicacionId(ubicacionId);
-        ValidarAreaId(areaId);
-        ValidarEstadoActivoId(estadoActivoId);
-        ValidarProveedorId(proveedorId);
-        ValidarResponsableId(responsableId);
-        ValidarCostoAdquisicion(costoAdquisicion);
         ValidarDescripcion(descripcion);
+        ValidarIdCategoria(idCategoria);
         ValidarMarca(marca);
         ValidarModelo(modelo);
         ValidarNumeroSerie(numeroSerie);
+        ValidarCostoAdquisicion(costoAdquisicion);
+        ValidarIdSede(idSede);
+        ValidarIdUbicacion(idUbicacion);
+        ValidarIdEstado(idEstado);
+        ValidarIdProveedor(idProveedor);
+        ValidarIdArea(idArea);
+        ValidarIdResponsable(idResponsable);
         ValidarMoneda(moneda);
         ValidarNumeroFactura(numeroFactura);
         ValidarObservaciones(observaciones);
 
         return new Activo(
-            empresaId,
+            idEmpresa,
             codigoInterno.Trim(),
             nombre.Trim(),
-            descripcion?.Trim(),
-            categoriaActivoId,
-            marca?.Trim(),
-            modelo?.Trim(),
-            numeroSerie?.Trim(),
+            descripcion.Trim(),
+            idCategoria,
+            marca.Trim(),
+            modelo.Trim(),
+            numeroSerie.Trim(),
             fechaCompra,
             costoAdquisicion,
             moneda?.Trim().ToUpperInvariant(),
-            proveedorId,
+            idProveedor,
             numeroFactura?.Trim(),
             fechaVencimientoGarantia,
-            sedeId,
-            ubicacionId,
-            areaId,
-            responsableId,
-            estadoActivoId,
+            idSede,
+            idUbicacion,
+            idArea,
+            idResponsable,
+            idEstado,
             observaciones?.Trim());
     }
 
     public void ActualizarDatos(
         string codigoInterno,
         string nombre,
-        int categoriaActivoId,
-        string? descripcion,
-        string? marca,
-        string? modelo,
-        string? numeroSerie,
+        string descripcion,
+        int idCategoria,
+        string marca,
+        string modelo,
+        string numeroSerie,
+        decimal costoAdquisicion,
         DateTime? fechaCompra,
-        decimal? costoAdquisicion,
         string? moneda,
-        int? proveedorId,
+        int? idProveedor,
         string? numeroFactura,
         DateTime? fechaVencimientoGarantia,
         string? observaciones)
     {
         ValidarCodigoInterno(codigoInterno);
         ValidarNombre(nombre);
-        ValidarCategoriaActivoId(categoriaActivoId);
-        ValidarProveedorId(proveedorId);
-        ValidarCostoAdquisicion(costoAdquisicion);
         ValidarDescripcion(descripcion);
+        ValidarIdCategoria(idCategoria);
         ValidarMarca(marca);
         ValidarModelo(modelo);
         ValidarNumeroSerie(numeroSerie);
+        ValidarCostoAdquisicion(costoAdquisicion);
+        ValidarIdProveedor(idProveedor);
         ValidarMoneda(moneda);
         ValidarNumeroFactura(numeroFactura);
         ValidarObservaciones(observaciones);
 
         CodigoInterno = codigoInterno.Trim();
         Nombre = nombre.Trim();
-        CategoriaActivoId = categoriaActivoId;
-        Descripcion = descripcion?.Trim();
-        Marca = marca?.Trim();
-        Modelo = modelo?.Trim();
-        NumeroSerie = numeroSerie?.Trim();
+        Descripcion = descripcion.Trim();
+        IdCategoria = idCategoria;
+        Marca = marca.Trim();
+        Modelo = modelo.Trim();
+        NumeroSerie = numeroSerie.Trim();
         FechaCompra = fechaCompra;
         CostoAdquisicion = costoAdquisicion;
         Moneda = moneda?.Trim().ToUpperInvariant();
-        ProveedorId = proveedorId;
+        IdProveedor = idProveedor;
         NumeroFactura = numeroFactura?.Trim();
         FechaVencimientoGarantia = fechaVencimientoGarantia;
         Observaciones = observaciones?.Trim();
     }
 
     /// <summary>Usado por Traslados: cambia la ubicación (y opcionalmente sede/área) actual.</summary>
-    public void ActualizarUbicacionActual(int sedeId, int ubicacionId, int areaId)
+    public void ActualizarUbicacionActual(int idSede, int idUbicacion, int? idArea)
     {
-        ValidarSedeId(sedeId);
-        ValidarUbicacionId(ubicacionId);
-        ValidarAreaId(areaId);
+        ValidarIdSede(idSede);
+        ValidarIdUbicacion(idUbicacion);
+        ValidarIdArea(idArea);
 
-        SedeId = sedeId;
-        UbicacionId = ubicacionId;
-        AreaId = areaId;
+        IdSede = idSede;
+        IdUbicacion = idUbicacion;
+        IdArea = idArea;
     }
 
     /// <summary>Usado por Asignaciones: cambia quién es el responsable actual (null = sin asignar).</summary>
-    public void ActualizarResponsableActual(int? responsableId)
+    public void ActualizarResponsableActual(int? idResponsable)
     {
-        ValidarResponsableId(responsableId);
-        ResponsableId = responsableId;
+        ValidarIdResponsable(idResponsable);
+        IdResponsable = idResponsable;
     }
 
     /// <summary>
@@ -248,16 +254,16 @@ public class Activo : EntityBase
     /// No existe un booleano Activo/Inactivo separado: el estado del activo
     /// siempre es uno de los valores de ese catálogo.
     /// </summary>
-    public void CambiarEstado(int estadoActivoId)
+    public void CambiarEstado(int idEstado)
     {
-        ValidarEstadoActivoId(estadoActivoId);
-        EstadoActivoId = estadoActivoId;
+        ValidarIdEstado(idEstado);
+        IdEstado = idEstado;
     }
 
-    private static void ValidarEmpresaId(int empresaId)
+    private static void ValidarIdEmpresa(int idEmpresa)
     {
-        if (empresaId <= 0)
-            throw new ArgumentException("La empresa es obligatoria.", nameof(empresaId));
+        if (idEmpresa <= 0)
+            throw new ArgumentException("La empresa es obligatoria.", nameof(idEmpresa));
     }
 
     private static void ValidarCodigoInterno(string codigoInterno)
@@ -276,76 +282,88 @@ public class Activo : EntityBase
             throw new ArgumentException("El nombre del activo no puede exceder 150 caracteres.", nameof(nombre));
     }
 
-    private static void ValidarCategoriaActivoId(int categoriaActivoId)
+    private static void ValidarDescripcion(string descripcion)
     {
-        if (categoriaActivoId <= 0)
-            throw new ArgumentException("La categoría es obligatoria.", nameof(categoriaActivoId));
-    }
-
-    private static void ValidarSedeId(int sedeId)
-    {
-        if (sedeId <= 0)
-            throw new ArgumentException("La sede es obligatoria.", nameof(sedeId));
-    }
-
-    private static void ValidarUbicacionId(int ubicacionId)
-    {
-        if (ubicacionId <= 0)
-            throw new ArgumentException("La ubicación es obligatoria.", nameof(ubicacionId));
-    }
-
-    private static void ValidarAreaId(int areaId)
-    {
-        if (areaId <= 0)
-            throw new ArgumentException("El área es obligatoria.", nameof(areaId));
-    }
-
-    private static void ValidarEstadoActivoId(int estadoActivoId)
-    {
-        if (estadoActivoId <= 0)
-            throw new ArgumentException("El estado del activo es obligatorio.", nameof(estadoActivoId));
-    }
-
-    private static void ValidarProveedorId(int? proveedorId)
-    {
-        if (proveedorId is <= 0)
-            throw new ArgumentException("El proveedor, si se informa, debe ser mayor a 0.", nameof(proveedorId));
-    }
-
-    private static void ValidarResponsableId(int? responsableId)
-    {
-        if (responsableId is <= 0)
-            throw new ArgumentException("El responsable, si se informa, debe ser mayor a 0.", nameof(responsableId));
-    }
-
-    private static void ValidarCostoAdquisicion(decimal? costoAdquisicion)
-    {
-        if (costoAdquisicion is < 0)
-            throw new ArgumentException("El costo de adquisición no puede ser negativo.", nameof(costoAdquisicion));
-    }
-
-    private static void ValidarDescripcion(string? descripcion)
-    {
-        if (descripcion is not null && descripcion.Trim().Length > 300)
+        if (string.IsNullOrWhiteSpace(descripcion))
+            throw new ArgumentException("La descripción es obligatoria.", nameof(descripcion));
+        if (descripcion.Trim().Length > 300)
             throw new ArgumentException("La descripción no puede exceder 300 caracteres.", nameof(descripcion));
     }
 
-    private static void ValidarMarca(string? marca)
+    private static void ValidarIdCategoria(int idCategoria)
     {
-        if (marca is not null && marca.Trim().Length > 100)
+        if (idCategoria <= 0)
+            throw new ArgumentException("La categoría es obligatoria.", nameof(idCategoria));
+    }
+
+    private static void ValidarMarca(string marca)
+    {
+        if (string.IsNullOrWhiteSpace(marca))
+            throw new ArgumentException("La marca es obligatoria.", nameof(marca));
+        if (marca.Trim().Length > 100)
             throw new ArgumentException("La marca no puede exceder 100 caracteres.", nameof(marca));
     }
 
-    private static void ValidarModelo(string? modelo)
+    private static void ValidarModelo(string modelo)
     {
-        if (modelo is not null && modelo.Trim().Length > 100)
+        if (string.IsNullOrWhiteSpace(modelo))
+            throw new ArgumentException("El modelo es obligatorio.", nameof(modelo));
+        if (modelo.Trim().Length > 100)
             throw new ArgumentException("El modelo no puede exceder 100 caracteres.", nameof(modelo));
     }
 
-    private static void ValidarNumeroSerie(string? numeroSerie)
+    private static void ValidarNumeroSerie(string numeroSerie)
     {
-        if (numeroSerie is not null && numeroSerie.Trim().Length > 100)
+        if (string.IsNullOrWhiteSpace(numeroSerie))
+            throw new ArgumentException("El número de serie es obligatorio.", nameof(numeroSerie));
+        if (numeroSerie.Trim().Length > 100)
             throw new ArgumentException("El número de serie no puede exceder 100 caracteres.", nameof(numeroSerie));
+    }
+
+    private static void ValidarCostoAdquisicion(decimal costoAdquisicion)
+    {
+        if (costoAdquisicion < 0)
+            throw new ArgumentException("El costo de adquisición no puede ser negativo.", nameof(costoAdquisicion));
+        if (costoAdquisicion > CostoMaximo)
+            throw new ArgumentException("El costo de adquisición no puede exceder 9,999,999,999.99.", nameof(costoAdquisicion));
+        if (decimal.Round(costoAdquisicion, 2) != costoAdquisicion)
+            throw new ArgumentException("El costo de adquisición no puede tener más de 2 decimales.", nameof(costoAdquisicion));
+    }
+
+    private static void ValidarIdSede(int idSede)
+    {
+        if (idSede <= 0)
+            throw new ArgumentException("La sede es obligatoria.", nameof(idSede));
+    }
+
+    private static void ValidarIdUbicacion(int idUbicacion)
+    {
+        if (idUbicacion <= 0)
+            throw new ArgumentException("La ubicación es obligatoria.", nameof(idUbicacion));
+    }
+
+    private static void ValidarIdArea(int? idArea)
+    {
+        if (idArea is <= 0)
+            throw new ArgumentException("El área, si se informa, debe ser mayor a 0.", nameof(idArea));
+    }
+
+    private static void ValidarIdEstado(int idEstado)
+    {
+        if (idEstado <= 0)
+            throw new ArgumentException("El estado del activo es obligatorio.", nameof(idEstado));
+    }
+
+    private static void ValidarIdProveedor(int? idProveedor)
+    {
+        if (idProveedor is <= 0)
+            throw new ArgumentException("El proveedor, si se informa, debe ser mayor a 0.", nameof(idProveedor));
+    }
+
+    private static void ValidarIdResponsable(int? idResponsable)
+    {
+        if (idResponsable is <= 0)
+            throw new ArgumentException("El responsable, si se informa, debe ser mayor a 0.", nameof(idResponsable));
     }
 
     private static void ValidarMoneda(string? moneda)

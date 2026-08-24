@@ -10,13 +10,15 @@ namespace InventarioEquipos.Domain.Entities;
 /// Depende de Usuario y Empresa, por lo que solo puede mergearse después
 /// de que ambas estén en main. Columnas según el diagrama: id_usuario,
 /// id_empresa, rol, empresa_predeterminada, fecha_asignacion.
+/// Las FKs se nombran IdUsuario / IdEmpresa para que coincidan con
+/// id_usuario / id_empresa al pasar a snake_case en el DbContext.
 /// </summary>
 public class UsuarioEmpresa : EntityBase
 {
-    public int UsuarioId { get; private set; }
+    public int IdUsuario { get; private set; }
     public Usuario? Usuario { get; private set; }
 
-    public int EmpresaId { get; private set; }
+    public int IdEmpresa { get; private set; }
     public Empresa? Empresa { get; private set; }
 
     public RolUsuarioEmpresa Rol { get; private set; }
@@ -27,27 +29,27 @@ public class UsuarioEmpresa : EntityBase
 
     protected UsuarioEmpresa() { }
 
-    private UsuarioEmpresa(int usuarioId, int empresaId, RolUsuarioEmpresa rol, bool empresaPredeterminada)
+    private UsuarioEmpresa(int idUsuario, int idEmpresa, RolUsuarioEmpresa rol, bool empresaPredeterminada)
     {
-        UsuarioId = usuarioId;
-        EmpresaId = empresaId;
+        IdUsuario = idUsuario;
+        IdEmpresa = idEmpresa;
         Rol = rol;
         EmpresaPredeterminada = empresaPredeterminada;
         FechaAsignacion = DateTime.UtcNow;
     }
 
     public static UsuarioEmpresa Crear(
-        int usuarioId,
-        int empresaId,
+        int idUsuario,
+        int idEmpresa,
         RolUsuarioEmpresa rol,
         bool empresaPredeterminada = false)
     {
-        if (usuarioId <= 0)
-            throw new ArgumentException("El usuario es obligatorio.", nameof(usuarioId));
-        if (empresaId <= 0)
-            throw new ArgumentException("La empresa es obligatoria.", nameof(empresaId));
+        if (idUsuario <= 0)
+            throw new ArgumentException("El usuario es obligatorio.", nameof(idUsuario));
+        if (idEmpresa <= 0)
+            throw new ArgumentException("La empresa es obligatoria.", nameof(idEmpresa));
 
-        return new UsuarioEmpresa(usuarioId, empresaId, rol, empresaPredeterminada);
+        return new UsuarioEmpresa(idUsuario, idEmpresa, rol, empresaPredeterminada);
     }
 
     public void CambiarRol(RolUsuarioEmpresa nuevoRol) => Rol = nuevoRol;
@@ -57,7 +59,7 @@ public class UsuarioEmpresa : EntityBase
     /// "solo una empresa predeterminada por usuario" cruza varias filas
     /// (varios UsuarioEmpresa del mismo usuario), así que se resuelve a
     /// nivel de servicio de aplicación (desmarcando las demás filas del
-    /// mismo UsuarioId), no dentro de esta entidad aislada.
+    /// mismo IdUsuario), no dentro de esta entidad aislada.
     /// </summary>
     public void MarcarComoPredeterminada() => EmpresaPredeterminada = true;
 
