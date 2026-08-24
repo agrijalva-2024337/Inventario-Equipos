@@ -6,10 +6,12 @@ namespace InventarioEquipos.Domain.Entities;
 /// <summary>
 /// Catálogo de categorías de activos por empresa. Depende de Empresa.
 /// Columnas según el diagrama: id_empresa, nombre, descripcion, estado.
+/// El PK del diagrama es id_categoria (no id_categoria_activo); el Id
+/// de EntityBase se mapea a esa columna en el DbContext.
 /// </summary>
 public class CategoriaActivo : EntityBase
 {
-    public int EmpresaId { get; private set; }
+    public int IdEmpresa { get; private set; }
     public Empresa? Empresa { get; private set; }
 
     public string Nombre { get; private set; } = default!;
@@ -18,30 +20,30 @@ public class CategoriaActivo : EntityBase
 
     protected CategoriaActivo() { }
 
-    private CategoriaActivo(int empresaId, string nombre, string? descripcion)
+    private CategoriaActivo(int idEmpresa, string nombre, string? descripcion)
     {
-        EmpresaId = empresaId;
+        IdEmpresa = idEmpresa;
         Nombre = nombre;
         Descripcion = descripcion;
         Estado = EstadoRegistro.Activo;
     }
 
-    public static CategoriaActivo Crear(int empresaId, string nombre, string? descripcion = null)
+    public static CategoriaActivo Crear(int idEmpresa, string nombre, string? descripcion = null)
     {
-        ValidarEmpresaId(empresaId);
+        ValidarIdEmpresa(idEmpresa);
         ValidarNombre(nombre);
         ValidarDescripcion(descripcion);
 
-        return new CategoriaActivo(empresaId, nombre.Trim(), descripcion?.Trim());
+        return new CategoriaActivo(idEmpresa, nombre.Trim(), descripcion?.Trim());
     }
 
-    public void ActualizarDatos(int empresaId, string nombre, string? descripcion)
+    public void ActualizarDatos(int idEmpresa, string nombre, string? descripcion)
     {
-        ValidarEmpresaId(empresaId);
+        ValidarIdEmpresa(idEmpresa);
         ValidarNombre(nombre);
         ValidarDescripcion(descripcion);
 
-        EmpresaId = empresaId;
+        IdEmpresa = idEmpresa;
         Nombre = nombre.Trim();
         Descripcion = descripcion?.Trim();
     }
@@ -50,10 +52,10 @@ public class CategoriaActivo : EntityBase
 
     public void Desactivar() => Estado = EstadoRegistro.Inactivo;
 
-    private static void ValidarEmpresaId(int empresaId)
+    private static void ValidarIdEmpresa(int idEmpresa)
     {
-        if (empresaId <= 0)
-            throw new ArgumentException("La empresa es obligatoria.", nameof(empresaId));
+        if (idEmpresa <= 0)
+            throw new ArgumentException("La empresa es obligatoria.", nameof(idEmpresa));
     }
 
     private static void ValidarNombre(string nombre)

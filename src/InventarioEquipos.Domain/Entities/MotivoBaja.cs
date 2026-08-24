@@ -1,38 +1,37 @@
 using InventarioEquipos.Domain.Common;
-using InventarioEquipos.Domain.Enums;
 
 namespace InventarioEquipos.Domain.Entities;
 
 /// <summary>
-/// Área o departamento de una empresa. Depende de Empresa. Columnas según
-/// el diagrama: id_empresa, nombre, descripcion, estado.
+/// Catálogo de motivos de baja de un activo (venta, robo, daño, etc.) por
+/// empresa. Depende de Empresa. Columnas según el diagrama: id_empresa,
+/// nombre, descripcion. El PK del diagrama es id_motivo_baja. El diagrama
+/// no incluye columna estado, por eso no usa Activar/Desactivar.
 /// </summary>
-public class Area : EntityBase
+public class MotivoBaja : EntityBase
 {
     public int IdEmpresa { get; private set; }
     public Empresa? Empresa { get; private set; }
 
     public string Nombre { get; private set; } = default!;
     public string? Descripcion { get; private set; }
-    public EstadoRegistro Estado { get; private set; }
 
-    protected Area() { }
+    protected MotivoBaja() { }
 
-    private Area(int idEmpresa, string nombre, string? descripcion)
+    private MotivoBaja(int idEmpresa, string nombre, string? descripcion)
     {
         IdEmpresa = idEmpresa;
         Nombre = nombre;
         Descripcion = descripcion;
-        Estado = EstadoRegistro.Activo;
     }
 
-    public static Area Crear(int idEmpresa, string nombre, string? descripcion = null)
+    public static MotivoBaja Crear(int idEmpresa, string nombre, string? descripcion = null)
     {
         ValidarIdEmpresa(idEmpresa);
         ValidarNombre(nombre);
         ValidarDescripcion(descripcion);
 
-        return new Area(idEmpresa, nombre.Trim(), descripcion?.Trim());
+        return new MotivoBaja(idEmpresa, nombre.Trim(), descripcion?.Trim());
     }
 
     public void ActualizarDatos(int idEmpresa, string nombre, string? descripcion)
@@ -46,10 +45,6 @@ public class Area : EntityBase
         Descripcion = descripcion?.Trim();
     }
 
-    public void Activar() => Estado = EstadoRegistro.Activo;
-
-    public void Desactivar() => Estado = EstadoRegistro.Inactivo;
-
     private static void ValidarIdEmpresa(int idEmpresa)
     {
         if (idEmpresa <= 0)
@@ -59,14 +54,14 @@ public class Area : EntityBase
     private static void ValidarNombre(string nombre)
     {
         if (string.IsNullOrWhiteSpace(nombre))
-            throw new ArgumentException("El nombre del área es obligatorio.", nameof(nombre));
-        if (nombre.Length > 100)
-            throw new ArgumentException("El nombre del área no puede exceder 100 caracteres.", nameof(nombre));
+            throw new ArgumentException("El nombre del motivo de baja es obligatorio.", nameof(nombre));
+        if (nombre.Length > 50)
+            throw new ArgumentException("El nombre del motivo de baja no puede exceder 50 caracteres.", nameof(nombre));
     }
 
     private static void ValidarDescripcion(string? descripcion)
     {
-        if (descripcion is not null && descripcion.Trim().Length > 200)
-            throw new ArgumentException("La descripción del área no puede exceder 200 caracteres.", nameof(descripcion));
+        if (descripcion is not null && descripcion.Trim().Length > 150)
+            throw new ArgumentException("La descripción del motivo de baja no puede exceder 150 caracteres.", nameof(descripcion));
     }
 }

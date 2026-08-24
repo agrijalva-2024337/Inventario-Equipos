@@ -614,3 +614,4 @@ public class InventarioEquiposDbContext(DbContextOptions<InventarioEquiposDbCont
         });
     }
 }
+

@@ -6,23 +6,23 @@ namespace InventarioEquipos.Domain.Entities;
 
 /// <summary>
 /// Responsable de activos, ligado a una empresa y un área. Depende de
-/// Empresa y Area. UsuarioId es opcional: un responsable puede no tener
+/// Empresa y Area. IdUsuario es opcional: un responsable puede no tener
 /// cuenta de acceso al sistema. Columnas según el diagrama: id_empresa,
 /// id_area, id_usuario (nullable), nombre_completo, cargo, correo,
-/// telefono, estado.
+/// telefono (los tres últimos opcionales), estado.
 /// </summary>
 public class Responsable : EntityBase
 {
     private static readonly Regex CorreoRegex =
         new(@"^[^@\s]+@[^@\s]+\.[^@\s]+$", RegexOptions.Compiled);
 
-    public int EmpresaId { get; private set; }
+    public int IdEmpresa { get; private set; }
     public Empresa? Empresa { get; private set; }
 
-    public int AreaId { get; private set; }
+    public int IdArea { get; private set; }
     public Area? Area { get; private set; }
 
-    public int? UsuarioId { get; private set; }
+    public int? IdUsuario { get; private set; }
     public Usuario? Usuario { get; private set; }
 
     public string NombreCompleto { get; private set; } = default!;
@@ -34,17 +34,17 @@ public class Responsable : EntityBase
     protected Responsable() { }
 
     private Responsable(
-        int empresaId,
-        int areaId,
-        int? usuarioId,
+        int idEmpresa,
+        int idArea,
+        int? idUsuario,
         string nombreCompleto,
         string? cargo,
         string? correo,
         string? telefono)
     {
-        EmpresaId = empresaId;
-        AreaId = areaId;
-        UsuarioId = usuarioId;
+        IdEmpresa = idEmpresa;
+        IdArea = idArea;
+        IdUsuario = idUsuario;
         NombreCompleto = nombreCompleto;
         Cargo = cargo;
         Correo = correo;
@@ -53,78 +53,78 @@ public class Responsable : EntityBase
     }
 
     public static Responsable Crear(
-        int empresaId,
-        int areaId,
+        int idEmpresa,
+        int idArea,
         string nombreCompleto,
-        int? usuarioId = null,
         string? cargo = null,
         string? correo = null,
-        string? telefono = null)
+        string? telefono = null,
+        int? idUsuario = null)
     {
-        ValidarEmpresaId(empresaId);
-        ValidarAreaId(areaId);
-        ValidarUsuarioId(usuarioId);
+        ValidarIdEmpresa(idEmpresa);
+        ValidarIdArea(idArea);
+        ValidarIdUsuario(idUsuario);
         ValidarNombreCompleto(nombreCompleto);
         ValidarCargo(cargo);
         correo = ValidarCorreoOpcional(correo);
         ValidarTelefono(telefono);
 
         return new Responsable(
-            empresaId,
-            areaId,
-            usuarioId,
+            idEmpresa,
+            idArea,
+            idUsuario,
             nombreCompleto.Trim(),
-            cargo?.Trim(),
+            NormalizarOpcional(cargo),
             correo,
-            telefono?.Trim());
+            NormalizarOpcional(telefono));
     }
 
     public void ActualizarDatos(
-        int empresaId,
-        int areaId,
+        int idEmpresa,
+        int idArea,
         string nombreCompleto,
-        int? usuarioId,
         string? cargo,
         string? correo,
-        string? telefono)
+        string? telefono,
+        int? idUsuario)
     {
-        ValidarEmpresaId(empresaId);
-        ValidarAreaId(areaId);
-        ValidarUsuarioId(usuarioId);
+        ValidarIdEmpresa(idEmpresa);
+        ValidarIdArea(idArea);
+        ValidarIdUsuario(idUsuario);
         ValidarNombreCompleto(nombreCompleto);
         ValidarCargo(cargo);
         correo = ValidarCorreoOpcional(correo);
         ValidarTelefono(telefono);
 
-        EmpresaId = empresaId;
-        AreaId = areaId;
-        UsuarioId = usuarioId;
+        IdEmpresa = idEmpresa;
+        IdArea = idArea;
+        IdUsuario = idUsuario;
         NombreCompleto = nombreCompleto.Trim();
-        Cargo = cargo?.Trim();
+        Cargo = NormalizarOpcional(cargo);
         Correo = correo;
-        Telefono = telefono?.Trim();
+        Telefono = NormalizarOpcional(telefono);
     }
 
     public void Activar() => Estado = EstadoRegistro.Activo;
 
     public void Desactivar() => Estado = EstadoRegistro.Inactivo;
 
-    private static void ValidarEmpresaId(int empresaId)
+    private static void ValidarIdEmpresa(int idEmpresa)
     {
-        if (empresaId <= 0)
-            throw new ArgumentException("La empresa es obligatoria.", nameof(empresaId));
+        if (idEmpresa <= 0)
+            throw new ArgumentException("La empresa es obligatoria.", nameof(idEmpresa));
     }
 
-    private static void ValidarAreaId(int areaId)
+    private static void ValidarIdArea(int idArea)
     {
-        if (areaId <= 0)
-            throw new ArgumentException("El área es obligatoria.", nameof(areaId));
+        if (idArea <= 0)
+            throw new ArgumentException("El área es obligatoria.", nameof(idArea));
     }
 
-    private static void ValidarUsuarioId(int? usuarioId)
+    private static void ValidarIdUsuario(int? idUsuario)
     {
-        if (usuarioId is <= 0)
-            throw new ArgumentException("El usuario, si se informa, debe ser mayor a 0.", nameof(usuarioId));
+        if (idUsuario is <= 0)
+            throw new ArgumentException("El usuario, si se informa, debe ser mayor a 0.", nameof(idUsuario));
     }
 
     private static void ValidarNombreCompleto(string nombreCompleto)
@@ -158,4 +158,7 @@ public class Responsable : EntityBase
         if (telefono is not null && telefono.Trim().Length > 30)
             throw new ArgumentException("El teléfono no puede exceder 30 caracteres.", nameof(telefono));
     }
+
+    private static string? NormalizarOpcional(string? valor)
+        => string.IsNullOrWhiteSpace(valor) ? null : valor.Trim();
 }
